@@ -1,38 +1,93 @@
-.App {
-  text-align: center;
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@900&display=swap');
+
+:root{
+  --primary-white: #fff;
+  --ice-blue: #ABD1F3;
+  --primary-dark: rgba(255,255,255,0)
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+body {
+
+
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/***************************************NAVBAR***************************************/
+
+
+
+.navbar-nav > li > a.active, .navbar-nav > li > a.active:focus{
+  border-top: 0.1875rem solid var(--ice-blue);
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.navbar-nav > li > a:hover{
+  border-top: 0.1875rem solid var(--ice-blue);
+}
+
+nav a.nav-link{
+  font-size: .8rem;
+  letter-spacing: 0.0375rem;
+  cursor: pointer;
+}
+
+nav ul li {
+  text-transform: uppercase;
+}
+
+.navbar-nav > li > a {
+  margin-right: 0.75rem;
+  margin-left: 0.75rem;
+  border-top: 0.1875rem solid var(--primary-dark);
+}
+
+.navbar-brand {
+  padding: 0;
+  max-width: 17.25rem !important;
+  height: 6rem !important;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
 }
 
-.App-link {
-  color: #61dafb;
+.navbar-brand a {
+  margin: 0;
+  line-height: 1; /* Isso ajusta o alinhamento vertical do texto */
+  font-size: 1.5rem; /* Ajuste o tamanho da fonte conforme necessário */
+  color: var(--primary-white) !important;
+  border-top: 0.1875rem solid var(--primary-dark);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/***************************************HEADER***************************************/
+
+.intro-wraper{
+  position: relative;
+
 }
+
+.hello{
+  font-family: 'Roboto', sans-serif;
+  font-size: 50px;
+}
+
+.introText{
+  font-family: 'Roboto', sans-serif;
+  font-size: 50px;
+}
+
+.introName{
+  font-family: 'Roboto', sans-serif;
+  color: var(--ice-blue) !important;
+  font-size: 50px;
+}
+
+.introPara{
+  font-size: 25px;
+}
+
+.intro-wraper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
