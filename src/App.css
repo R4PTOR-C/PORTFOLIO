@@ -57,7 +57,7 @@ nav ul li {
   border-top: 0.1875rem solid var(--primary-dark);
 }
 
-/***************************************HEADER***************************************/
+/***************************************INTRO***************************************/
 
 .intro-wraper{
   position: relative;
@@ -90,4 +90,22 @@ nav ul li {
   align-items: center;
   height: 100vh;
 }
+
+/***************************************ABOUT***************************************/
+
+.aboutPara{
+  justify-content: center;
+  font-size: 25px;
+}
+
+.about-wraper{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+
+/***************************************Experience***************************************/
+
 
