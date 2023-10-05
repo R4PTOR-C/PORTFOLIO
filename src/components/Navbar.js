@@ -3,17 +3,10 @@ import $ from 'jquery';
 
 
 const Navbar = () => {
-    function scrollToExperience() {
-        $('html, body').animate({
-            scrollTop: $('#experience-section').offset().top
-        }, 500); // Tempo de animação em milissegundos (1 segundo no exemplo)
-    }
 
-    function scrollToAbout() {
-        $('html, body').animate({
-            scrollTop: $('#about-section').offset().top
-        }, 500); // Tempo de animação em milissegundos (1 segundo no exemplo)
-    }
+
+
+
 
     return(
 
@@ -34,10 +27,10 @@ const Navbar = () => {
                                 <a className="nav-link" aria-current="page" href="#">Home</a>
                             </li>
                             <li className="nav-item active">
-                                <a className="nav-link" aria-current="page" onClick={scrollToAbout}>About</a>
+                                <a className="nav-link" aria-current="page" href="#about-section">About</a>
                             </li>
                             <li className="nav-item active">
-                                <a className="nav-link" aria-current="page" onClick={scrollToExperience}> Experience</a>
+                                <a className="nav-link" href="#experience-section">Experience</a>
                             </li>
                             <li className="nav-item active">
                                 <a className="nav-link" aria-current="page" href="#">Projects</a>

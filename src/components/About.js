@@ -4,10 +4,9 @@ const About = () =>{
     return(
         <div id="about-section" className="about-wraper">
             <div className="container">
-                <p className="aboutPara">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
-                    efficitur ex sit amet massa scelerisque scelerisque. Aliquam erat
-                    volutpat. Aenean interdum finibus efficitur. Praesent dapibus dolor
-                    felis, eu ultrices elit molestie.</p>
+                <p className="aboutPara">I'm a Junior full stack developer based on Brazil.
+                I've worked on many personal projects of many kinds. I have a passion for programmin
+                and I like to code fun, pretty and usefull things.</p>
             </div>
         </div>
     )

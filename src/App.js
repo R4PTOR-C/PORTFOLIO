@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react'; // Import useEffect from 'react'
+
 import ReactDOM from "react-dom/client";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -15,6 +16,11 @@ import $ from 'jquery';
 
 
 function App() {
+    useEffect(() => {
+        // Add the smooth-scroll class to the body
+        document.body.classList.add('smooth-scroll');
+    }, []);
+
   return (
      <>
          <Navbar/>
@@ -25,5 +31,6 @@ function App() {
      </>
   );
 }
+document.body.classList.add('smooth-scroll');
 
 export default App;
