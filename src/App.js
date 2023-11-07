@@ -8,8 +8,10 @@ import './style/App.css'
 import Intro from "./components/Intro";
 import Experience from "./components/Experience";
 import About from "./components/About";
+import CollegeContent from "./components/College_content";
 import './style/Experience.css'
 import './style/About.css'
+import './style/CollegeContent.css';
 
 
 import { Button } from 'reactstrap';
@@ -28,6 +30,7 @@ function App() {
          <Intro/>
          <About/>
          <Experience/>
+         <CollegeContent/>
 
      </>
   );
