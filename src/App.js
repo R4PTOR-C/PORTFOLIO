@@ -15,6 +15,12 @@ import './style/CollegeContent.css';
 
 import { Button } from 'reactstrap';
 import $ from 'jquery';
+import Cont1 from "./components/cont1";
+import Cont2 from "./components/cont2";
+import Cont3 from "./components/cont3";
+import Cont4 from "./components/cont4";
+import Cont5 from "./components/cont5";
+
 
 function App() {
     useEffect(() => {
@@ -28,7 +34,12 @@ function App() {
                 <Navbar />
                 <Routes>
                     <Route path="/" element={<Home />} />
-                    <Route path="/college-content" element={<CollegeContentPage />} />
+                    <Route path="/notacao-assintotica" element={<Cont1 />} />
+                    <Route path="/complexidade-pessimista" element={<Cont2 />} />
+                    <Route path="/algoritmos-gulosos" element={<Cont3 />} />
+                    <Route path="/complexidade-problemas" element={<Cont4 />} />
+                    <Route path="/classes" element={<Cont5 />} />
+
                 </Routes>
             </>
         </Router>
