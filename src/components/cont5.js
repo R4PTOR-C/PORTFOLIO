@@ -13,10 +13,14 @@ const Cont5 = () => {
             <p className="aboutPara">
                 P é a classe de problemas de decisão (ou otimização) que podem ser resolvidos em tempo polinomial por um algoritmo determinístico. Isso significa que o tempo de execução do algoritmo cresce de forma limitada à medida que o tamanho da entrada aumenta.
                 Problemas em P são considerados "eficientemente solucionáveis".
+                <br/>
+                <br/>
                 Classe NP:
 
                 NP é a classe de problemas de decisão para os quais uma solução candidata pode ser verificada em tempo polinomial. Se alguém propõe uma solução, você pode verificar sua validade rapidamente.
                 NP inclui problemas cujas soluções não são necessariamente fáceis de encontrar, mas são fáceis de verificar uma vez encontradas.
+                <br/>
+                <br/>
                 Classe NP-completo:
 
                 Os problemas NP-completos são uma classe especial de problemas em NP que são tão difíceis quanto os problemas mais difíceis em NP. Se um problema NP-completo pudesse ser resolvido em tempo polinomial, todos os problemas em NP poderiam ser resolvidos em tempo polinomial, o que implicaria P = NP.
