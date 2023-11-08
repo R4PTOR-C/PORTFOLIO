@@ -5,7 +5,10 @@ import $ from 'jquery';
 const Navbar = () => {
 
 
-
+    const handleHomeClick = () => {
+        // Redirect to the home page
+        window.location.href = "/";
+    };
 
 
     return(
@@ -23,19 +26,16 @@ const Navbar = () => {
                     <div className="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul className="navbar-nav ms-auto">
                             <li className="nav-item active">
-                                <a className="nav-link" aria-current="page" href="#">Home</a>
+                                <a className="nav-link" aria-current="page" href="#" onClick={handleHomeClick}>Home</a>
                             </li>
-                            <li className="nav-item active">
+                            {/*  <li className="nav-item active">
                                 <a className="nav-link" aria-current="page" href="#about-section">About</a>
                             </li>
                             <li className="nav-item active">
                                 <a className="nav-link" href="#experience-section">Experience</a>
-                            </li>
+                            </li> */}
                             <li className="nav-item active">
-                                <a className="nav-link" aria-current="page" href="#">Projects</a>
-                            </li>
-                            <li className="nav-item active">
-                                <a className="nav-link" aria-current="page" href="#college-section">Conteudo Faculdade</a>
+                                <a className="nav-link" aria-current="page" href="#cards-section">Conteudo Faculdade</a>
                             </li>
                         </ul>
                     </div>

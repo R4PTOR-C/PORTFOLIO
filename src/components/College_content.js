@@ -7,7 +7,14 @@ const CollegeContent = () => {
         <div id="college-section">
             <div className="container">
 
-                <h1>NOTAÇÃO ASSINTÓTICA</h1>
+
+                <h1 className="title">COMPLEXIDADE DE ALGORÍTMOS</h1>
+
+                <br/>
+                <br/>
+                <br/>
+
+                <h1 className="title">NOTAÇÃO ASSINTÓTICA</h1>
                 <p className="aboutPara">A notação assintótica é uma ferramenta matemática utilizada na análise de algoritmos e no estudo do comportamento de funções à medida que seus argumentos tendem ao infinito. Ela descreve como o desempenho ou o crescimento de uma função ou algoritmo se compara a uma função de referência à medida que os valores de entrada aumentam.
 
                     Existem três notações assintóticas amplamente utilizadas:
@@ -21,12 +28,18 @@ const CollegeContent = () => {
                     Essas notações são fundamentais para analisar e comparar a eficiência de algoritmos, ajudando os desenvolvedores a tomar decisões informadas sobre quais algoritmos escolher em diferentes situações. Eles permitem prever como o tempo de execução ou o uso de memória de um algoritmo crescerá à medida que o tamanho dos dados de entrada aumenta, o que é crucial na otimização de código e na resolução de problemas computacionais de maneira eficaz
                 </p>
 
-                <h1>COMPLEXIDADE PESSIMISTA</h1>
+                <br/>
+                <br/>
+
+                <h1 className="title">COMPLEXIDADE PESSIMISTA</h1>
                 <p className="aboutPara">
                     A complexidade pessimista, ou complexidade de pior caso, é um conceito na análise de algoritmos que se concentra em determinar o tempo de execução máximo de um algoritmo em situações de entrada adversas. Ela é expressa usando a notação "O" (Big O) para fornecer um limite superior para o crescimento do tempo de execução à medida que o tamanho dos dados de entrada aumenta. Essa análise é fundamental para escolher algoritmos adequados para tarefas específicas, especialmente quando se lida com grandes conjuntos de dados. No entanto, é importante lembrar que a complexidade pessimista é apenas um aspecto da análise de algoritmos, juntamente com a complexidade média e a complexidade de melhor caso. A escolha do algoritmo mais apropriado depende das necessidades e das características do problema a ser resolvido.
                 </p>
 
-                <h1>ALGORITMOS GULOSOS</h1>
+                <br/>
+                <br/>
+
+                <h1 className="title">ALGORITMOS GULOSOS</h1>
                 <p className="aboutPara">
                     Algoritmos gulosos (ou greedy algorithms, em inglês) são um paradigma de projeto de algoritmos que se baseiam na escolha da melhor opção local em cada etapa, na esperança de que isso leve a uma solução globalmente ótima. Em resumo, esses algoritmos fazem escolhas locais que parecem ser as mais vantajosas no momento, sem considerar retrocessos ou retroceder em decisões anteriores. Aqui está um resumo das principais características e conceitos relacionados a algoritmos gulosos:
 
@@ -43,7 +56,10 @@ const CollegeContent = () => {
                     Em resumo, algoritmos gulosos são uma abordagem eficaz para resolver muitos problemas de otimização, embora não garantam sempre a solução ótima. Eles são especialmente úteis quando a escolha local imediata leva a uma solução de boa qualidade, e a simplicidade e eficiência são prioridades.
                 </p>
 
-                <h1>COMPLEXIDADE DE PROBLEMAS</h1>
+                <br/>
+                <br/>
+
+                <h1 className="title">COMPLEXIDADE DE PROBLEMAS</h1>
                 <p className="aboutPara">
                     A complexidade de problemas refere-se à classificação e análise do esforço computacional necessário para resolver problemas em termos de tempo e recursos. A teoria da complexidade de problemas ajuda a entender a dificuldade intrínseca de várias tarefas e a categorizá-las com base em sua dificuldade computacional. Aqui está um resumo dos principais conceitos relacionados à complexidade de problemas:
 
@@ -59,7 +75,11 @@ const CollegeContent = () => {
 
                     A teoria da complexidade de problemas é fundamental na ciência da computação e na matemática teórica, pois ajuda a entender os limites intrínsecos da computação e a classificar a dificuldade de uma ampla gama de problemas. Ela também desempenha um papel importante na criptografia, na otimização, na teoria dos jogos e em muitas outras áreas da informática e da matemática.
                 </p>
-                <h1>CLASSES P, NP E NP-COMPLETO</h1>
+
+                <br/>
+                <br/>
+
+                <h1 className="title">CLASSES P, NP E NP-COMPLETO</h1>
                 <p className="aboutPara">
                     P é a classe de problemas de decisão (ou otimização) que podem ser resolvidos em tempo polinomial por um algoritmo determinístico. Isso significa que o tempo de execução do algoritmo cresce de forma limitada à medida que o tamanho da entrada aumenta.
                     Problemas em P são considerados "eficientemente solucionáveis".
