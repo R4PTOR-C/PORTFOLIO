@@ -28,14 +28,11 @@ const Navbar = () => {
                             <li className="nav-item active">
                                 <a className="nav-link" aria-current="page" href="#" onClick={handleHomeClick}>Home</a>
                             </li>
-                            {/*  <li className="nav-item active">
+                            <li className="nav-item active">
                                 <a className="nav-link" aria-current="page" href="#about-section">About</a>
                             </li>
                             <li className="nav-item active">
                                 <a className="nav-link" href="#experience-section">Experience</a>
-                            </li> */}
-                            <li className="nav-item active">
-                                <a className="nav-link" aria-current="page" href="#cards-section">Conteudo Faculdade</a>
                             </li>
                         </ul>
                     </div>
