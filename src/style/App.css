@@ -6,9 +6,11 @@
   --primary-dark: rgba(255,255,255,0)
 }
 
-body {
-  scroll-behavior: smooth;
+body.dark-mode {
+  background-color: #333;
+  color: white;
 }
+
 
 /***************************************NAVBAR***************************************/
 .smooth-scroll {
@@ -57,6 +59,24 @@ nav ul li {
   font-size: 1.5rem; /* Ajuste o tamanho da fonte conforme necessário */
   color: var(--primary-white) !important;
   border-top: 0.1875rem solid var(--primary-dark);
+}
+
+.toggle-button {
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.icon-sun, .icon-moon {
+  display: none;
+}
+
+.dark-mode .icon-sun {
+  display: block;
+}
+
+.light-mode .icon-moon {
+  display: block;
 }
 
 

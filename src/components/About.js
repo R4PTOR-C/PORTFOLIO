@@ -11,7 +11,8 @@ const About = () =>{
                                             logical problem-solving, cutting-edge technology, and the endless
                                             possibilities for exploration it offers.
                                             Beyond the screen, you'll find me engrossed in books, honing my gaming skills,
-                                            and staying physically fit.</p>
+                                            and staying physically fit.
+                    </p>
             </div>
         </div>
     )

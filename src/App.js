@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from "react-dom/client";
 import 'bootstrap/dist/css/bootstrap.min.css'; // Importa apenas o arquivo minificado para evitar redundância.
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'; // Importe o JavaScript do Bootstrap
@@ -16,13 +16,16 @@ import { Button } from 'reactstrap'; // Certifique-se de que você realmente pre
 import $ from 'jquery';
 
 function App() {
+    const [darkMode, setDarkMode] = useState(false);
+
     useEffect(() => {
-        document.body.classList.add('smooth-scroll');
-    }, []);
+        document.body.classList.toggle('dark-mode', darkMode);
+        document.body.classList.toggle('light-mode', !darkMode);
+    }, [darkMode]);
 
     return (
         <>
-            <Navbar />
+            <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
             <Intro />
             <About />
             <Experience />
