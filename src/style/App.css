@@ -62,10 +62,25 @@ nav ul li {
 }
 
 .toggle-button {
-  border: none;
-  background: none;
-  cursor: pointer;
+  background: none; /* Remove o fundo */
+  border: none; /* Remove a borda */
+  outline: none; /* Remove o contorno que aparece ao focar o botão */
+  cursor: pointer; /* Muda o cursor para indicar que é clicável */
+
+  /* Estilos adicionais para alinhamento e espaçamento, se necessário */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px; /* Espaçamento interno para dar espaço ao redor do ícone */
 }
+
+/* Estilos para os ícones dentro do botão */
+.toggle-button svg {
+  fill: currentColor; /* Faz o ícone herdar a cor do texto do botão */
+  width: 24px; /* Largura do ícone */
+  height: 24px; /* Altura do ícone */
+}
+
 
 .icon-sun, .icon-moon {
   display: none;
@@ -78,6 +93,7 @@ nav ul li {
 .light-mode .icon-moon {
   display: block;
 }
+
 
 
 /***************************************INTRO***************************************/
