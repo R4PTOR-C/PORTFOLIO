@@ -7,11 +7,14 @@ import './style/App.css';
 import './style/About.css';
 import './style/Experience.css'
 function App() {
-    const [darkMode, setDarkMode] = useState(false);
+    const [darkMode, setDarkMode] = useState(() => {
+        const savedMode = localStorage.getItem('darkMode');
+        return savedMode ? savedMode === 'true' : false;
+    });
 
     useEffect(() => {
+        localStorage.setItem('darkMode', darkMode ? 'true' : 'false');
         document.body.classList.toggle('dark-mode', darkMode);
-        document.body.classList.toggle('light-mode', !darkMode);
     }, [darkMode]);
 
     return (
