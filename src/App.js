@@ -7,15 +7,22 @@ import './style/App.css';
 import './style/About.css';
 import './style/Experience.css'
 function App() {
+    const [darkMode, setDarkMode] = useState(false);
+
+    useEffect(() => {
+        document.body.classList.toggle('dark-mode', darkMode);
+        document.body.classList.toggle('light-mode', !darkMode);
+    }, [darkMode]);
 
     return (
         <>
-            <Navbar />
-            <Intro/>
-            <About/>
-            <Experience/>
+            <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
+            <Intro />
+            <About />
+            <Experience />
         </>
     );
 }
+
 
 export default App;
