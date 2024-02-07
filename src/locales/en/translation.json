@@ -1,0 +1,22 @@
+{
+  "introHello": "Hello, ",
+  "introIm": "I'm ",
+  "introName": "Rafael, ",
+  "introRole": "Full Stack Developer",
+  "introDescription": "I am a junior web developer with experience in both Front-End and Back-End",
+
+  "aboutParagraph": "Dedicated to the lifelong pursuit of knowledge, I am a full-stack developer passionate about JavaScript, Java, and the expansive realm of development. My fervor for this field is ignited by the fusion of creativity, logical problem-solving, cutting-edge technology, and the endless possibilities for exploration it offers. Beyond the screen, you'll find me engrossed in books, honing my gaming skills, and staying physically fit.",
+
+
+  "experience1Duration": "2 Years",
+  "experience1Year": "2021",
+  "experience1Title": "Information Technology Intern",
+  "experience1Description": "Administration and development of websites in Joomla and Wordpress. Development of applications in Oracle APEX using SQL. Integration of SEI with the CHARLES system using Oracle APEX. Documentation and IT process creation. User support, business mapping, and creation of dashboards with Google Data Studio.",
+
+  "experience2Duration": "1 Year",
+  "experience2Year": "2023",
+  "experience2Title": "Full Stack Web Development Intern",
+  "experience2Description": "Development of full-stack web applications using Ruby, HTML, CSS, Javascript, and the Rails framework. Collaboration on development projects and implementation of technological solutions."
+
+
+}

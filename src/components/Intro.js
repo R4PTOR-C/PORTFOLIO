@@ -1,15 +1,18 @@
 import React from "react";
+import { useTranslation } from 'react-i18next';
 
-const Intro = () =>{
+const Intro = () => {
+    const { t } = useTranslation();
+
     return(
         <div className="intro-wraper">
             <div className="main-info">
-                <span className={"hello"}>Hello, </span> <br/>
-                <span className={"introText"}>I'm <span className={"introName"}>Rafael, </span><br/>Full Stack Developer</span>
-                <p className={"introPara"}>I am a junior web developer with experience in both Front-End and Back-End</p>
+                <span className="hello">{t('introHello')}</span> <br/>
+                <span className="introText">{t('introIm')}<span className="introName">{t('introName')}</span><br/>{t('introRole')}</span>
+                <p className="introPara">{t('introDescription')}</p>
             </div>
         </div>
-    )
+    );
 }
 
 export default Intro;
