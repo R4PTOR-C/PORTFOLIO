@@ -5,7 +5,8 @@ import Experience from "./components/Experience";
 import About from "./components/About";
 import './style/App.css';
 import './style/About.css';
-import './style/Experience.css'
+import './style/Experience.css';
+import './i18n';
 function App() {
     const [darkMode, setDarkMode] = useState(() => {
         const savedMode = localStorage.getItem('darkMode');

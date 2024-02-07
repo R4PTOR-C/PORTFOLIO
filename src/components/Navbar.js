@@ -1,7 +1,14 @@
 import React from "react";
+import { useTranslation } from 'react-i18next';
 import { ReactComponent as MoonIcon } from '../assets/moon_icon.svg';
 import { ReactComponent as SunIcon } from '../assets/sun_icon.svg';
 const Navbar = ({ darkMode, setDarkMode }) => {
+    const { i18n } = useTranslation();
+
+    const changeLanguage = (language) => {
+        i18n.changeLanguage(language);
+        localStorage.setItem('i18nextLng', language); // Salva a escolha do idioma
+    };
     return(
 
         <nav className="navbar navbar-expand-lg bg-body-tertiary fixed-top" data-bs-theme="dark">
@@ -30,12 +37,20 @@ const Navbar = ({ darkMode, setDarkMode }) => {
                                 Idioms
                             </a>
                             <ul className="dropdown-menu dropdown-menu-end">
-                                <li><a className="dropdown-item" href="#">Inglês</a></li>
-                                <li><a className="dropdown-item" href="#">Português</a></li>
+                                <li>
+                                    <button className="dropdown-item" type="button"
+                                            onClick={() => changeLanguage('en')}>English
+                                    </button>
+                                </li>
+                                <li>
+                                    <button className="dropdown-item" type="button"
+                                            onClick={() => changeLanguage('pt')}>Português
+                                    </button>
+                                </li>
                             </ul>
                         </li>
                         <button className="toggle-button" onClick={() => setDarkMode(!darkMode)}>
-                            {darkMode ? <SunIcon/> : <MoonIcon/> }
+                            {darkMode ? <SunIcon/> : <MoonIcon/>}
                         </button>
                     </ul>
                 </div>

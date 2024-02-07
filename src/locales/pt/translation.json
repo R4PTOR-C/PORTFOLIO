@@ -1,0 +1,24 @@
+{
+
+  "introHello": "Olá, ",
+  "introIm": "Eu sou ",
+  "introName": "Rafael, ",
+  "introRole": "Desenvolvedor Full Stack",
+  "introDescription": "Sou um desenvolvedor web júnior com experiência em Front-End e Back-End",
+
+
+"aboutParagraph": "Dedicado à busca contínua pelo conhecimento, sou um desenvolvedor full-stack apaixonado por JavaScript, Java e o vasto mundo do desenvolvimento. Meu entusiasmo por esta área é alimentado pela fusão de criatividade, solução de problemas lógicos, tecnologia de ponta e as infinitas possibilidades de exploração que oferece. Fora da tela, você me encontrará absorto em livros, aprimorando minhas habilidades em jogos e mantendo a forma física.",
+
+
+  "experience1Duration": "2 Anos",
+  "experience1Year": "2021",
+  "experience1Title": "Estagiário de Tecnologia da Informação",
+  "experience1Description": "Administração e desenvolvimento de sites em Joomla e Wordpress. Desenvolvimento de aplicações em Oracle APEX usando SQL. Integração do SEI com o sistema CHARLES usando Oracle APEX. Criação de documentação e processos de TI. Suporte ao usuário, mapeamento de negócios e criação de dashboards com Google Data Studio.",
+
+  "experience2Duration": "1 Ano",
+  "experience2Year": "2023",
+  "experience2Title": "Estagiário de Desenvolvimento Web Full Stack",
+  "experience2Description": "Desenvolvimento de aplicações web full-stack usando Ruby, HTML, CSS, Javascript e o framework Rails. Colaboração em projetos de desenvolvimento e implementação de soluções tecnológicas."
+
+
+}
