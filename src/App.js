@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+import Projects from "./components/Projects";
 import Navbar from "./components/Navbar";
 import Intro from "./components/Intro";
 import Experience from "./components/Experience";
@@ -19,12 +22,20 @@ function App() {
     }, [darkMode]);
 
     return (
-        <>
+        <Router>
             <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
-            <Intro />
-            <About />
-            <Experience />
-        </>
+            <Routes>
+                <Route path="/projects" element={<Projects />} />
+                <Route path="/" element={
+                    <>
+                        <Intro />
+                        <About />
+                        <Experience />
+                    </>
+                } />
+            </Routes>
+        </Router>
+
     );
 }
 
