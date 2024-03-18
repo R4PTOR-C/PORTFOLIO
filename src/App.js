@@ -28,7 +28,7 @@ function App() {
                 <Route path="/projects" element={<Projects />} />
                 <Route path="/" element={
                     <>
-                        <Intro />
+                        <Intro darkMode={darkMode} />
                         <About />
                         <Experience />
                     </>
