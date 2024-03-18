@@ -1,4 +1,9 @@
 {
+  "navHome": "Home",
+  "navAbout": "About",
+  "navExperience": "Experience",
+  "navIdioms": "Idioms",
+
   "introHello": "Hello, ",
   "introIm": "I'm ",
   "introName": "Rafael, ",
