@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom'; // Adicione esta linha
 const Navbar = ({ darkMode, setDarkMode }) => {
     const navigate = useNavigate();
 
+    const { t } = useTranslation();
 
     const { i18n } = useTranslation();
 
@@ -38,13 +39,13 @@ const Navbar = ({ darkMode, setDarkMode }) => {
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul className="navbar-nav ms-auto">
                         <li className="nav-item">
-                            <a className="nav-link" onClick={handleHomeClick}>Home</a>
+                            <a className="nav-link" onClick={handleHomeClick}>{t('navHome')}</a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="#about-section">About</a>
+                            <a className="nav-link" href="#about-section">{t('navAbout')}</a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="#experience-section">Experience</a>
+                            <a className="nav-link" href="#experience-section">{t('navExperience')}</a>
                         </li>
                         {/*
                         <li className="nav-item">
@@ -54,7 +55,7 @@ const Navbar = ({ darkMode, setDarkMode }) => {
                         <li className="nav-item dropdown">
                             <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                                aria-expanded="false">
-                                Idioms
+                                {t('navIdioms')}
                             </a>
                             <ul className="dropdown-menu dropdown-menu-end">
                                 <li>
