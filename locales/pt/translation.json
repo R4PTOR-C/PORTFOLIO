@@ -1,0 +1,45 @@
+{
+  "navAbout": "Sobre",
+  "navSkills": "Habilidades",
+  "navExperience": "Experiência",
+  "navEducation": "Educação",
+
+  "heroHello": "Olá, eu sou",
+  "heroRole": "Software Engineer",
+  "heroDescription": "Construo aplicações web do front ao back-end. Atualmente na Assembleia Legislativa de Goiás, desenvolvendo sistemas críticos com Ruby on Rails e JavaScript moderno.",
+  "heroCta": "Entrar em contato",
+
+  "aboutTitle": "Sobre Mim",
+  "aboutText": "Sou um engenheiro de software apaixonado por construir produtos que fazem sentido — do banco de dados à interface. Atuo no setor público goiano desde 2021, entregando sistemas que servem diariamente servidores e cidadãos. Acredito em código limpo, APIs bem pensadas e na ideia de que software bem feito economiza tempo de quem usa.",
+
+  "skillsTitle": "Habilidades",
+
+  "experienceTitle": "Experiência",
+
+  "exp1Company": "FAPEG",
+  "exp1CompanyFull": "Fundação de Amparo à Pesquisa do Estado de Goiás",
+  "exp1Role": "Junior Software Engineer",
+  "exp1Period": "2021 – 2023",
+  "exp1Desc1": "Desenvolveu aplicações de gestão científica em Oracle APEX, automatizando processos antes feitos manualmente por pesquisadores e técnicos.",
+  "exp1Desc2": "Criou e manteve sites institucionais com WordPress, garantindo acessibilidade, performance e identidade visual da fundação.",
+  "exp1Desc3": "Prestou suporte técnico a pesquisadores e colaboradores, gerenciando acessos e resolvendo incidentes com agilidade.",
+
+  "exp2Company": "Assembleia Legislativa do Estado de Goiás",
+  "exp2Role": "Junior Software Engineer",
+  "exp2Period": "2023 – Presente",
+  "exp2Desc1": "Desenvolve e mantém sistemas web institucionais utilizados por todo o corpo legislativo, com Ruby on Rails e tecnologias frontend modernas.",
+  "exp2Desc2": "Constrói APIs RESTful e integra fontes de dados institucionais em aplicações críticas de alta disponibilidade.",
+  "exp2Desc3": "Moderniza funcionalidades legadas, reduzindo inconsistências e melhorando a experiência de uso dos servidores públicos.",
+
+  "educationTitle": "Educação",
+  "eduDegree": "Bacharelado em Engenharia de Software",
+  "eduSchool": "Universidade Alves Faria",
+  "eduPeriod": "2020 – 2026",
+  "eduStatus": "Em andamento",
+
+  "splitFrontDesc": "Construo interfaces rápidas, acessíveis e agradáveis de usar — do design ao código.",
+  "splitBackDesc": "Projeto e desenvolvo APIs, modelagens de dados e sistemas que sustentam o negócio.",
+  "splitDrag": "arraste",
+
+  "footerRights": "Todos os direitos reservados."
+}

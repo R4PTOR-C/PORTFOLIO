@@ -1,0 +1,45 @@
+{
+  "navAbout": "About",
+  "navSkills": "Skills",
+  "navExperience": "Experience",
+  "navEducation": "Education",
+
+  "heroHello": "Hi, I'm",
+  "heroRole": "Software Engineer",
+  "heroDescription": "I build web applications from front to back. Currently at the Legislative Assembly of Goiás, crafting critical systems with Ruby on Rails and modern JavaScript.",
+  "heroCta": "Get in touch",
+
+  "aboutTitle": "About Me",
+  "aboutText": "I'm a software engineer who cares about building things that actually matter — from database to UI. I've been working in Goiás' public sector since 2021, delivering systems that serve public servants and citizens every day. I believe in clean code, thoughtful APIs, and the idea that well-crafted software saves time for the people who use it.",
+
+  "skillsTitle": "Skills",
+
+  "experienceTitle": "Experience",
+
+  "exp1Company": "FAPEG",
+  "exp1CompanyFull": "Fundação de Amparo à Pesquisa do Estado de Goiás",
+  "exp1Role": "Junior Software Engineer",
+  "exp1Period": "2021 – 2023",
+  "exp1Desc1": "Built scientific management applications in Oracle APEX, automating workflows that researchers and staff previously handled manually.",
+  "exp1Desc2": "Developed and maintained institutional websites with WordPress, ensuring accessibility, performance, and visual consistency across the foundation.",
+  "exp1Desc3": "Provided technical support to researchers and collaborators, resolving incidents and managing access with speed and precision.",
+
+  "exp2Company": "Assembleia Legislativa do Estado de Goiás",
+  "exp2Role": "Junior Software Engineer",
+  "exp2Period": "2023 – Present",
+  "exp2Desc1": "Develops and maintains institutional web systems used across the entire legislative body, built with Ruby on Rails and modern frontend technologies.",
+  "exp2Desc2": "Builds RESTful APIs and integrates institutional data sources into critical, high-availability applications.",
+  "exp2Desc3": "Modernizes legacy features, reducing inconsistencies and improving the day-to-day experience of public servants.",
+
+  "educationTitle": "Education",
+  "eduDegree": "Bachelor's of Software Engineering",
+  "eduSchool": "Universidade Alves Faria",
+  "eduPeriod": "2020 – 2026",
+  "eduStatus": "In Progress",
+
+  "splitFrontDesc": "I build fast, accessible, and enjoyable interfaces — from design to production-ready code.",
+  "splitBackDesc": "I design and develop APIs, data models, and systems that power the business logic.",
+  "splitDrag": "drag",
+
+  "footerRights": "All rights reserved."
+}
