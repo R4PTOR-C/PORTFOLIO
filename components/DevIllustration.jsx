@@ -181,7 +181,7 @@ export default function DevIllustration({ frontness = 0.5 }) {
       {/* ─ Screen content (BACK — terminal) ─ */}
       <g opacity={1 - f} style={{ transition: 'opacity 0.5s ease' }}>
         {/* Terminal header */}
-        <rect x="27" y="187" width="146" height="14" rx="5 5 0 0" fill="#0c1a2e" />
+        <rect x="27" y="187" width="146" height="14" rx="5" fill="#0c1a2e" />
         <circle cx="36" cy="194" r="3" fill="#ff5f5780" />
         <circle cx="46" cy="194" r="3" fill="#febc2e80" />
         <circle cx="56" cy="194" r="3" fill="#28c84080" />

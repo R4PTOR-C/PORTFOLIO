@@ -1,6 +1,34 @@
 'use client';
 import { useTranslation } from 'react-i18next';
+import { useEffect, useRef, useState } from 'react';
 import FadeIn from '@/components/FadeIn';
+
+function AnimatedCounter({ to, suffix = '', duration = 1600 }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+  const started = useRef(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !started.current) {
+        started.current = true;
+        const start = performance.now();
+        const tick = (now) => {
+          const elapsed = now - start;
+          const progress = Math.min(elapsed / duration, 1);
+          const ease = 1 - Math.pow(1 - progress, 3);
+          setCount(Math.round(ease * to));
+          if (progress < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      }
+    }, { threshold: 0.4 });
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [to, duration]);
+
+  return <span ref={ref}>{count}{suffix}</span>;
+}
 
 export default function About() {
   const { t } = useTranslation();
@@ -43,20 +71,26 @@ export default function About() {
           <FadeIn delay={0.1} className="col-span-2 md:col-span-2 card rounded-3xl p-6 flex flex-col items-center justify-center text-center gap-4 relative overflow-hidden">
             {/* bg glow */}
             <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,229,160,0.07) 0%, transparent 70%)' }} />
-            {/* monogram */}
-            <div
-              className="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl font-black relative"
-              style={{
-                background: 'rgba(0,229,160,0.07)',
-                border: '1px solid rgba(0,229,160,0.2)',
-                backgroundImage: 'linear-gradient(135deg,#00e5a0,#3b82f6)',
-                WebkitBackgroundClip: 'text',
-                backgroundClip: 'text',
-              }}
-            >
-              <span style={{ backgroundImage: 'linear-gradient(135deg,#00e5a0,#3b82f6)', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                RC
-              </span>
+
+            {/* SVG clipPath definition */}
+            <svg width="0" height="0" className="absolute">
+              <defs>
+                <clipPath id="hexClip" clipPathUnits="objectBoundingBox">
+                  <path d="M 0.136,0.24 L 0.457,0.055 Q 0.5,0.03 0.543,0.055 L 0.864,0.24 Q 0.907,0.265 0.907,0.315 L 0.907,0.685 Q 0.907,0.735 0.864,0.76 L 0.543,0.945 Q 0.5,0.97 0.457,0.945 L 0.136,0.76 Q 0.093,0.735 0.093,0.685 L 0.093,0.315 Q 0.093,0.265 0.136,0.24 Z" />
+                </clipPath>
+              </defs>
+            </svg>
+
+            {/* Hexagonal photo frame */}
+            <div className="relative w-56 h-56">
+              {/* glow ring behind */}
+              <div className="absolute inset-0 scale-110" style={{ clipPath: 'url(#hexClip)', background: 'linear-gradient(135deg,rgba(0,229,160,0.35),rgba(59,130,246,0.35))' }} />
+              {/* inner border */}
+              <div className="absolute inset-[2px]" style={{ clipPath: 'url(#hexClip)', background: 'rgba(0,229,160,0.08)' }} />
+              {/* photo */}
+              <div className="absolute inset-[3px]" style={{ clipPath: 'url(#hexClip)' }}>
+                <img src="/perfil.jpeg" alt="Rafael Caldas" className="w-full h-full object-cover object-top" />
+              </div>
             </div>
             <div>
               <p className="text-text font-bold text-base">Rafael Caldas</p>
@@ -78,14 +112,18 @@ export default function About() {
 
           {/* ── STAT CARDS (4×) ── */}
           {[
-            { value: '4+',    label: 'Anos de experiência',  accent: '#00e5a0' },
-            { value: '2',     label: 'Empresas',             accent: '#3b82f6' },
-            { value: 'PT·EN', label: 'Idiomas',              accent: '#a78bfa' },
-            { value: '2026',  label: 'Formação',             accent: '#00e5a0' },
+            { count: 4,    suffix: '+',   label: 'Anos de experiência', accent: '#00e5a0' },
+            { count: 2,    suffix: '',    label: 'Empresas',            accent: '#3b82f6' },
+            { count: null, text: 'PT·EN', label: 'Idiomas',             accent: '#a78bfa' },
+            { count: 2026, suffix: '',    label: 'Formação',            accent: '#00e5a0' },
           ].map((s, i) => (
             <FadeIn key={s.label} delay={0.15 + i * 0.05} className="col-span-1 card rounded-2xl p-5 flex flex-col items-center justify-center text-center gap-1.5 relative overflow-hidden">
               <div className="absolute inset-x-0 top-0 h-0.5 rounded-t-2xl" style={{ background: s.accent, opacity: 0.5 }} />
-              <span className="text-3xl font-extrabold" style={{ color: s.accent }}>{s.value}</span>
+              <span className="text-3xl font-extrabold" style={{ color: s.accent }}>
+                {s.count !== null
+                  ? <AnimatedCounter to={s.count} suffix={s.suffix} duration={s.count > 100 ? 2000 : 1200} />
+                  : s.text}
+              </span>
               <span className="text-[10px] text-dim font-mono tracking-wider uppercase leading-snug">{s.label}</span>
             </FadeIn>
           ))}

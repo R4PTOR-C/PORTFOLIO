@@ -1,4 +1,5 @@
 'use client';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import FadeIn from '@/components/FadeIn';
 
@@ -21,6 +22,41 @@ const experiences = [
   },
 ];
 
+function AnimatedTrack() {
+  const ref  = useRef(null);
+  const [h, setH] = useState(0);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const parent = el.parentElement;
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        const full = parent.getBoundingClientRect().height - 24;
+        let start = null;
+        const duration = 900;
+        const tick = (ts) => {
+          if (!start) start = ts;
+          const p = Math.min((ts - start) / duration, 1);
+          const ease = 1 - Math.pow(1 - p, 2);
+          setH(Math.round(ease * full));
+          if (p < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+        observer.disconnect();
+      }
+    }, { threshold: 0.15 });
+
+    observer.observe(parent);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} className="absolute left-0 top-3 w-px overflow-hidden" style={{ height: `${h}px`, background: 'linear-gradient(to bottom, #00e5a0, #3b82f6)', boxShadow: '0 0 6px rgba(0,229,160,0.4)', transition: 'none' }} />
+  );
+}
+
 export default function Experience() {
   const { t } = useTranslation();
 
@@ -34,14 +70,15 @@ export default function Experience() {
         </FadeIn>
 
         <div className="mt-12 relative pl-5 md:pl-7">
-          {/* Track */}
-          <div className="absolute left-0 top-3 bottom-3 w-px timeline-track" />
+          {/* Static dim track */}
+          <div className="absolute left-0 top-3 bottom-3 w-px" style={{ background: 'rgba(20,34,56,0.8)' }} />
+          {/* Animated colored track */}
+          <AnimatedTrack />
 
           <div className="flex flex-col gap-8">
             {experiences.map((exp, i) => (
               <FadeIn key={exp.companyKey} delay={i * 0.1} direction="right">
                 <div className="relative">
-                  {/* Dot */}
                   {exp.current ? (
                     <span className="absolute -left-[1.65rem] md:-left-[1.9rem] top-2 w-3 h-3 rounded-full bg-neon pulse-dot" />
                   ) : (
@@ -49,7 +86,6 @@ export default function Experience() {
                   )}
 
                   <div className="card rounded-2xl p-6 md:p-8">
-                    {/* Header row */}
                     <div className="flex flex-wrap items-start justify-between gap-3 mb-1">
                       <div>
                         <h3 className="text-text font-bold text-lg md:text-xl leading-snug">
@@ -68,15 +104,12 @@ export default function Experience() {
                       </span>
                     </div>
 
-                    {/* Role */}
                     <p className={`text-sm font-semibold font-mono tracking-wide mb-5 ${exp.current ? 'text-neon' : 'text-blue-light'}`}>
                       {t(exp.roleKey)}
                     </p>
 
-                    {/* Divider */}
                     <div className="h-px bg-border-dim mb-5" />
 
-                    {/* Bullets */}
                     <ul className="flex flex-col gap-3">
                       {exp.descKeys.map((key) => (
                         <li key={key} className="flex gap-3 text-sm text-muted leading-relaxed">

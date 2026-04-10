@@ -25,7 +25,7 @@ export default function IsometricDesk({ side = 'front' }) {
 
           {/* Browser window — top left */}
           <rect x="4" y="20" width="90" height="62" rx="5" fill="#0c1a2e" stroke="rgba(0,229,160,0.28)" strokeWidth="0.8" />
-          <rect x="4" y="20" width="90" height="13" rx="5 5 0 0" fill="#081422" />
+          <rect x="4" y="20" width="90" height="13" rx="5" fill="#081422" />
           <circle cx="13" cy="26.5" r="2.5" fill="#ff5f57" opacity="0.85" />
           <circle cx="20" cy="26.5" r="2.5" fill="#febc2e" opacity="0.85" />
           <circle cx="27" cy="26.5" r="2.5" fill="#28c840" opacity="0.85" />
@@ -137,7 +137,7 @@ export default function IsometricDesk({ side = 'front' }) {
 
           {/* Terminal window — top left */}
           <rect x="4" y="12" width="94" height="72" rx="5" fill="#040c16" stroke="rgba(59,130,246,0.28)" strokeWidth="0.8" />
-          <rect x="4" y="12" width="94" height="14" rx="5 5 0 0" fill="#060e18" />
+          <rect x="4" y="12" width="94" height="14" rx="5" fill="#060e18" />
           <circle cx="13" cy="19" r="2.5" fill="#ff5f5780" />
           <circle cx="20" cy="19" r="2.5" fill="#febc2e80" />
           <circle cx="27" cy="19" r="2.5" fill="#28c84080" />
