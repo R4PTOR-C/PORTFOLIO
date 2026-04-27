@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef } from 'react';
 
-const STAR_COUNT = 120;
+const STAR_COUNT = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches ? 60 : 120;
 
 export default function StarField() {
   const canvasRef = useRef(null);
@@ -88,7 +88,7 @@ export default function StarField() {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 z-0 pointer-events-none"
-      style={{ opacity: 0.6 }}
+      style={{ opacity: 0.6, willChange: 'transform', transform: 'translateZ(0)' }}
     />
   );
 }

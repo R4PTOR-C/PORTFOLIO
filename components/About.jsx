@@ -1,7 +1,142 @@
 'use client';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
 import FadeIn from '@/components/FadeIn';
+
+const SWEEP_DURATION = 3; // seconds per full rotation
+
+const BLIPS = [
+  { angle: 38,  r: 62, label: 'React',    color: '#00e5a0' },
+  { angle: 84,  r: 40, label: 'Next.js',  color: '#60a5fa' },
+  { angle: 150, r: 66, label: 'Node.js',  color: '#00e5a0' },
+  { angle: 200, r: 36, label: 'Tailwind', color: '#a78bfa' },
+  { angle: 258, r: 58, label: 'PostgreSQL',color: '#60a5fa' },
+  { angle: 314, r: 44, label: 'Python',   color: '#00e5a0' },
+];
+
+function toXY(angle, r, cx = 100, cy = 100) {
+  const rad = ((angle - 90) * Math.PI) / 180;
+  return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+}
+
+function ProfileAvatar() {
+  return (
+    <svg viewBox="0 0 200 200" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="radarBg" cx="50%" cy="50%" r="55%">
+          <stop offset="0%" stopColor="#0d1f36" />
+          <stop offset="100%" stopColor="#050b14" />
+        </radialGradient>
+        <filter id="blipGlow">
+          <feGaussianBlur stdDeviation="2.5" result="b" />
+          <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+        <filter id="centerGlow">
+          <feGaussianBlur stdDeviation="4" result="b" />
+          <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+        <linearGradient id="rcGradR" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#3b82f6" />
+          <stop offset="100%" stopColor="#00e5a0" />
+        </linearGradient>
+      </defs>
+
+      {/* Background */}
+      <rect width="200" height="200" fill="url(#radarBg)" />
+
+      {/* Crosshairs */}
+      <line x1="100" y1="16" x2="100" y2="184" stroke="rgba(0,229,160,0.06)" strokeWidth="0.6" />
+      <line x1="16" y1="100" x2="184" y2="100" stroke="rgba(0,229,160,0.06)" strokeWidth="0.6" />
+
+      {/* Radar rings */}
+      {[30, 50, 70].map((r, i) => (
+        <circle key={i} cx="100" cy="100" r={r}
+          fill="none" stroke="rgba(0,229,160,0.09)" strokeWidth="0.7" />
+      ))}
+
+      {/* Sweep fan — CSS keyframe avoids SVG/CSS transform conflict */}
+      <g className="radar-sweep">
+        {Array.from({ length: 22 }, (_, i) => {
+          // Calculate absolute endpoint for each trail line
+          // i=0 is leading edge (pointing up), i>0 trails behind (negative angle = CCW offset)
+          const rad = (-i * 4 * Math.PI) / 180;
+          const R = 71;
+          const x2 = 100 + R * Math.sin(rad);
+          const y2 = 100 - R * Math.cos(rad);
+          const isLeading = i === 0;
+          return (
+            <line key={i}
+              x1="100" y1="100" x2={x2} y2={y2}
+              stroke="#00e5a0"
+              strokeWidth={isLeading ? 1.5 : 0.6}
+              opacity={isLeading ? 0.75 : Math.pow((22 - i) / 22, 2) * 0.22}
+            />
+          );
+        })}
+        {/* Leading edge glow dot — at tip of i=0 line (up direction before rotation) */}
+        <circle cx="100" cy="29" r="2.5" fill="#00e5a0" opacity="0.9" />
+      </g>
+
+      {/* Blips */}
+      {BLIPS.map((blip) => {
+        const { x, y } = toXY(blip.angle, blip.r);
+        const delay = (blip.angle / 360) * SWEEP_DURATION;
+        const labelRight = x > 100;
+        return (
+          <g key={blip.label}>
+            {/* Pulse ring — animate r directly, no transform needed */}
+            <motion.circle
+              cx={x} cy={y}
+              fill="none" stroke={blip.color} strokeWidth="0.8"
+              animate={{ r: [3, 12], opacity: [0.6, 0] }}
+              transition={{ duration: SWEEP_DURATION, delay, repeat: Infinity, ease: 'easeOut', times: [0, 0.7] }}
+            />
+            {/* Blip dot */}
+            <motion.circle
+              cx={x} cy={y} r={2.8}
+              fill={blip.color}
+              filter="url(#blipGlow)"
+              animate={{ opacity: [0, 1, 0.9, 0.2, 0] }}
+              transition={{ duration: SWEEP_DURATION, delay, repeat: Infinity, ease: 'easeOut', times: [0, 0.04, 0.2, 0.6, 1] }}
+            />
+            {/* Label */}
+            <motion.text
+              x={labelRight ? x + 6 : x - 6} y={y + 1.5}
+              textAnchor={labelRight ? 'start' : 'end'}
+              fontFamily="monospace" fontSize="6.5" fill={blip.color}
+              animate={{ opacity: [0, 0.9, 0.9, 0, 0] }}
+              transition={{ duration: SWEEP_DURATION, delay, repeat: Infinity, ease: 'easeOut', times: [0, 0.05, 0.35, 0.65, 1] }}
+            >
+              {blip.label}
+            </motion.text>
+          </g>
+        );
+      })}
+
+      {/* Center disc */}
+      <circle cx="100" cy="100" r="24"
+        fill="rgba(5,11,20,0.85)" stroke="rgba(0,229,160,0.22)" strokeWidth="1" />
+
+      {/* RC monogram */}
+      <text x="100" y="107"
+        textAnchor="middle" fontFamily="monospace"
+        fontSize="20" fontWeight="900"
+        fill="url(#rcGradR)" filter="url(#centerGlow)"
+        letterSpacing="-0.5"
+      >RC</text>
+
+      {/* SCANNING label */}
+      <motion.text
+        x="162" y="193"
+        fontFamily="monospace" fontSize="5.5"
+        fill="rgba(0,229,160,0.35)"
+        animate={{ opacity: [0.35, 0.1, 0.35] }}
+        transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
+      >SCANNING...</motion.text>
+    </svg>
+  );
+}
 
 function AnimatedCounter({ to, suffix = '', duration = 1600 }) {
   const [count, setCount] = useState(0);
@@ -81,15 +216,15 @@ export default function About() {
               </defs>
             </svg>
 
-            {/* Hexagonal photo frame */}
+            {/* Hexagonal avatar frame */}
             <div className="relative w-56 h-56">
               {/* glow ring behind */}
               <div className="absolute inset-0 scale-110" style={{ clipPath: 'url(#hexClip)', background: 'linear-gradient(135deg,rgba(0,229,160,0.35),rgba(59,130,246,0.35))' }} />
               {/* inner border */}
               <div className="absolute inset-[2px]" style={{ clipPath: 'url(#hexClip)', background: 'rgba(0,229,160,0.08)' }} />
-              {/* photo */}
-              <div className="absolute inset-[3px]" style={{ clipPath: 'url(#hexClip)' }}>
-                <img src="/perfil.jpeg" alt="Rafael Caldas" className="w-full h-full object-cover object-top" />
+              {/* placeholder */}
+              <div className="absolute inset-[3px] overflow-hidden" style={{ clipPath: 'url(#hexClip)' }}>
+                <ProfileAvatar />
               </div>
             </div>
             <div>

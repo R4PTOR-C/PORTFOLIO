@@ -193,6 +193,17 @@ body {
   animation: glitch-clip2 0.4s steps(2) 1;
 }
 
+/* ─── Radar sweep ─── */
+@keyframes radar-sweep {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.radar-sweep {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  animation: radar-sweep 3s linear infinite;
+}
+
 /* ─── Gradient text util ─── */
 .gradient-text {
   background: linear-gradient(135deg, #3b82f6 0%, #00e5a0 100%);

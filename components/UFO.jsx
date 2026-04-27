@@ -86,7 +86,7 @@ export default function UFO() {
     };
   }, []);
 
-  const y = useTransform(scrollY, [0, 3000], [20, 500]);
+  const y = useTransform(scrollY, [0, 3000], [8, 444]);
   const x = useTransform(scrollY, [0, 3000], [0, -40]);
   const springY = useSpring(y, { stiffness: 40, damping: 18 });
   const springX = useSpring(x, { stiffness: 40, damping: 18 });
@@ -94,10 +94,10 @@ export default function UFO() {
   return (
     <>
       <motion.div
-        className="fixed right-4 md:right-10 z-[60]"
-        style={{ top: 0, y: springY, x: springX, width: '100px', height: '58px', cursor: 'pointer' }}
+        className="fixed right-4 md:right-10 z-40"
+        style={{ top: '64px', y: springY, x: springX, width: '100px', height: '58px', cursor: 'pointer' }}
         initial={{ opacity: 0, y: -60 }}
-        animate={{ opacity: 1, y: 20 }}
+        animate={{ opacity: 1, y: 8 }}
         transition={{ delay: 2.5, duration: 1, ease: [0.16, 1, 0.3, 1] }}
       >
         <motion.div
