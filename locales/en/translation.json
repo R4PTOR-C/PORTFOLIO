@@ -10,11 +10,25 @@
   "heroCta": "Get in touch",
 
   "aboutTitle": "About Me",
+  "aboutHeadline": "I build systems from database to browser.",
   "aboutText": "I'm a software engineer who cares about building things that actually matter — from database to UI. I've been working in Goiás' public sector since 2021, delivering systems that serve public servants and citizens every day. I believe in clean code, thoughtful APIs, and the idea that well-crafted software saves time for the people who use it.",
+  "aboutStatus": "Open to opportunities",
+  "aboutCurrently": "Currently at",
+  "aboutContact": "Let's talk",
+  "aboutActive": "ACTIVE",
+  "statYears": "Years of experience",
+  "statCompanies": "Companies",
+  "statLanguages": "Languages",
+  "statDegree": "Degree",
 
   "skillsTitle": "Skills",
+  "skillsTag": "// stack",
+  "skillsFront": "front-end",
+  "skillsBack": "back-end",
+  "skillsTools": "tools",
 
   "experienceTitle": "Experience",
+  "experienceTag": "// career",
 
   "exp1Company": "FAPEG",
   "exp1CompanyFull": "Fundação de Amparo à Pesquisa do Estado de Goiás",
@@ -32,6 +46,7 @@
   "exp2Desc3": "Modernizes legacy features, reducing inconsistencies and improving the day-to-day experience of public servants.",
 
   "educationTitle": "Education",
+  "educationTag": "// education",
   "eduDegree": "Bachelor's of Software Engineering",
   "eduSchool": "Universidade Alves Faria",
   "eduPeriod": "2020 – 2026",

@@ -10,7 +10,7 @@ export default function Education() {
       <div className="max-w-6xl mx-auto">
 
         <FadeIn>
-          <div className="section-tag">{t('educationTitle')}</div>
+          <div className="section-tag">{t('educationTag')}</div>
           <h2 className="text-3xl md:text-4xl font-bold text-text">{t('educationTitle')}</h2>
         </FadeIn>
 

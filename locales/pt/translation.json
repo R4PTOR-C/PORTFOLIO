@@ -10,11 +10,25 @@
   "heroCta": "Entrar em contato",
 
   "aboutTitle": "Sobre Mim",
+  "aboutHeadline": "Construo sistemas do banco ao browser.",
   "aboutText": "Sou um engenheiro de software apaixonado por construir produtos que fazem sentido — do banco de dados à interface. Atuo no setor público goiano desde 2021, entregando sistemas que servem diariamente servidores e cidadãos. Acredito em código limpo, APIs bem pensadas e na ideia de que software bem feito economiza tempo de quem usa.",
+  "aboutStatus": "Aberto a oportunidades",
+  "aboutCurrently": "Atualmente em",
+  "aboutContact": "Vamos conversar",
+  "aboutActive": "ATIVO",
+  "statYears": "Anos de experiência",
+  "statCompanies": "Empresas",
+  "statLanguages": "Idiomas",
+  "statDegree": "Formação",
 
   "skillsTitle": "Habilidades",
+  "skillsTag": "// stack",
+  "skillsFront": "front-end",
+  "skillsBack": "back-end",
+  "skillsTools": "ferramentas",
 
   "experienceTitle": "Experiência",
+  "experienceTag": "// carreira",
 
   "exp1Company": "FAPEG",
   "exp1CompanyFull": "Fundação de Amparo à Pesquisa do Estado de Goiás",
@@ -32,6 +46,7 @@
   "exp2Desc3": "Moderniza funcionalidades legadas, reduzindo inconsistências e melhorando a experiência de uso dos servidores públicos.",
 
   "educationTitle": "Educação",
+  "educationTag": "// formação",
   "eduDegree": "Bacharelado em Engenharia de Software",
   "eduSchool": "Universidade Alves Faria",
   "eduPeriod": "2020 – 2026",
