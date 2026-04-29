@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
-import { motion, AnimatePresence, useSpring, useTransform, useMotionValue, useAnimation } from 'framer-motion';
+import { motion, AnimatePresence, useTransform, useMotionValue, useAnimation } from 'framer-motion';
 
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
@@ -106,7 +106,6 @@ function EnemyUFOSvg() {
 
 // ── Laser bolt ───────────────────────────────────────────────────────────────
 function LaserBolt({ fromEnemy, top, onDone }) {
-  const isEnemy = fromEnemy;
   return (
     <motion.div
       className="fixed z-[9988] pointer-events-none rounded-full"
@@ -114,16 +113,16 @@ function LaserBolt({ fromEnemy, top, onDone }) {
         top,
         height: 3,
         width: 80,
-        ...(isEnemy ? { left: 110 } : { right: 110 }),
-        background: isEnemy
+        ...(fromEnemy ? { left: 110 } : { right: 110 }),
+        background: fromEnemy
           ? 'linear-gradient(to right, #ff4545, #ffaa44)'
           : 'linear-gradient(to left, #00e5a0, #00ffaa)',
-        boxShadow: isEnemy
+        boxShadow: fromEnemy
           ? '0 0 10px #ff4545, 0 0 3px #ff0000'
           : '0 0 10px #00e5a0, 0 0 3px #00ff99',
       }}
       initial={{ x: 0, opacity: 1 }}
-      animate={{ x: isEnemy ? '95vw' : '-95vw', opacity: [1, 1, 1, 0] }}
+      animate={{ x: fromEnemy ? '95vw' : '-95vw', opacity: [1, 1, 1, 0] }}
       transition={{ duration: 0.28, ease: 'linear' }}
       onAnimationComplete={onDone}
     />
@@ -132,17 +131,31 @@ function LaserBolt({ fromEnemy, top, onDone }) {
 
 // ── Main component ────────────────────────────────────────────────────────────
 export default function UFO() {
-  const scrollY     = useMotionValue(0);
-  const [beam,      setBeam]      = useState(false);
-  const [showEnemy, setShowEnemy] = useState(false);
-  const [lasers,    setLasers]    = useState([]);
-  const [fighting,  setFighting]  = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [vpW, setVpW]         = useState(1440);
+  const [vpH, setVpH]         = useState(900);
 
-  const ufoRef      = useRef(null);
-  const timerRef    = useRef(null);
-  const laserIdRef  = useRef(0);
+  const scrollY      = useMotionValue(0);
+  const [beam,       setBeam]      = useState(false);
+  const [showEnemy,  setShowEnemy] = useState(false);
+  const [lasers,     setLasers]    = useState([]);
+  const [fighting,   setFighting]  = useState(false);
+  const fightRef     = useRef(false);
+
+  const ufoRef       = useRef(null);
+  const timerRef     = useRef(null);
+  const laserIdRef   = useRef(0);
   const enemyControls = useAnimation();
-  const [battleTop, setBattleTop] = useState(64);
+  const [battleTop,  setBattleTop] = useState(64);
+
+  useEffect(() => {
+    setMounted(true);
+    setVpW(window.innerWidth);
+    setVpH(window.innerHeight);
+    const onResize = () => { setVpW(window.innerWidth); setVpH(window.innerHeight); };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
 
   useEffect(() => {
     const onScroll = () => scrollY.set(window.scrollY);
@@ -151,7 +164,7 @@ export default function UFO() {
     const beamLoop = () => {
       const delay = 4000 + Math.random() * 6000;
       timerRef.current = setTimeout(() => {
-        if (!fighting) setBeam(true);
+        if (!fightRef.current) setBeam(true);
         setTimeout(() => { setBeam(false); beamLoop(); }, 1800);
       }, delay);
     };
@@ -161,13 +174,30 @@ export default function UFO() {
       window.removeEventListener('scroll', onScroll);
       clearTimeout(timerRef.current);
     };
-  }, [fighting]);
+  }, []);
 
-  const y       = useTransform(scrollY, [0, 3000], [8, 444]);
-  const x       = useTransform(scrollY, [0, 3000], [0, -40]);
-  const springY = useSpring(y, { stiffness: 40, damping: 18 });
-  const springX = useSpring(x, { stiffness: 40, damping: 18 });
+  // ── Desktop scroll path (pure rail — position = f(scrollY), no spring lag) ──
+  const R      = vpW - 116;  // right margin (px from viewport left)
+  const L      = 16;          // left margin
+  const cross1 = 860;         // Hero → About crossing
+  const cross2 = 2120;        // Skills → Experience crossing
 
+  // Y stays in the top strip [80, 220] so the UFO never enters content
+  const pathY = useTransform(scrollY, [0, 3600], [80, 220]);
+
+  // X traverses from margin to margin over 400 px of scroll — visible movement
+  const pathX = useTransform(scrollY,
+    [0,  cross1 - 200, cross1 + 200, cross2 - 200, cross2 + 200, 3600],
+    [R,  R,            L,            L,             R,            R   ],
+  );
+
+  // Tilt peaks at the midpoint of each crossing
+  const pathRotate = useTransform(scrollY,
+    [0, cross1 - 200, cross1, cross1 + 200, cross2 - 200, cross2, cross2 + 200, 3600],
+    [0, 0,            -22,    0,             0,            22,     0,             0   ],
+  );
+
+  // ── Battle helpers ───────────────────────────────────────────────────────
   const addLaser = (fromEnemy) => {
     const rect = ufoRef.current?.getBoundingClientRect();
     const top  = rect ? rect.top + rect.height / 2 - 1 : 120;
@@ -178,34 +208,31 @@ export default function UFO() {
   const removeLaser = (id) => setLasers(prev => prev.filter(l => l.id !== id));
 
   const startBattle = async () => {
-    if (fighting) return;
+    if (fightRef.current) return;
+    fightRef.current = true;
     setFighting(true);
     setBeam(false);
 
     const rect = ufoRef.current?.getBoundingClientRect();
     setBattleTop(rect ? rect.top : 64);
 
-    // Enemy enters from off-screen left
     setShowEnemy(true);
     enemyControls.set({ x: -160, opacity: 1, scale: 1, rotate: 0 });
     await enemyControls.start({ x: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } });
 
-    // Enemy bobs while fighting
     enemyControls.start({
       y: [0, -5, 0],
       transition: { duration: 1.8, repeat: Infinity, ease: 'easeInOut' },
     });
 
-    // Rapid laser exchange
     await sleep(200); addLaser(false);
     await sleep(320); addLaser(true);
     await sleep(260); addLaser(false);
     await sleep(290); addLaser(true);
     await sleep(240); addLaser(false);
     await sleep(310); addLaser(true);
-    await sleep(220); addLaser(false); // killing shot
+    await sleep(220); addLaser(false);
 
-    // Enemy takes the hit — shake
     await sleep(280);
     await enemyControls.start({
       x: [0, -10, 10, -8, 8, -5, 0],
@@ -213,7 +240,6 @@ export default function UFO() {
       transition: { duration: 0.45 },
     });
 
-    // Enemy flees
     await enemyControls.start({
       x: -500,
       scale: 0.4,
@@ -222,18 +248,27 @@ export default function UFO() {
     });
 
     setShowEnemy(false);
+    fightRef.current = false;
     setFighting(false);
   };
+
+  if (!mounted) return null;
+
+  const isMobile = vpW < 768;
 
   return (
     <>
       {/* Player UFO */}
       <motion.div
         ref={ufoRef}
-        className="fixed right-4 md:right-10 z-40"
-        style={{ top: '64px', y: springY, x: springX, width: '100px', height: '58px' }}
-        initial={{ opacity: 0, y: -60 }}
-        animate={{ opacity: 1, y: 8 }}
+        className="fixed z-40"
+        style={
+          isMobile
+            ? { right: 16, top: 64, width: 100, height: 58 }
+            : { left: 0, top: 0, x: pathX, y: pathY, rotate: pathRotate, width: 100, height: 58 }
+        }
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{ delay: 2.5, duration: 1, ease: [0.16, 1, 0.3, 1] }}
       >
         <motion.div
@@ -254,7 +289,7 @@ export default function UFO() {
         {showEnemy && (
           <motion.div
             className="fixed left-4 md:left-10 z-40 pointer-events-none"
-            style={{ top: battleTop, width: '100px', height: '58px' }}
+            style={{ top: battleTop, width: 100, height: 58 }}
             animate={enemyControls}
             exit={{ opacity: 0 }}
           >
