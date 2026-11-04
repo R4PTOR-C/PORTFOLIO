@@ -4,6 +4,7 @@ import I18nProvider from "@/components/I18nProvider";
 import StarField from "@/components/StarField";
 import ScrollProgress from "@/components/ScrollProgress";
 import UFO from "@/components/UFO";
+import Loader from "@/components/Loader";
 import BackToTop from "@/components/BackToTop";
 
 /* Three type roles. Unbounded carries display (wide, spacey), Geist
@@ -60,12 +61,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="pt" className="scroll-smooth" suppressHydrationWarning>
       <head>
-        {/* Hide the headline letters before first paint so the saucer can
+        {/* First visit of the session: show the arrival loader (ufo-boot) and
+            hide the headline letters before first paint so the saucer can
             drop them in. Once per session, never under reduced motion, and
             it undoes itself if the game script never shows up. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: "try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!sessionStorage.getItem('ufo.intro')){var d=document.documentElement;d.classList.add('ufo-intro');setTimeout(function(){d.classList.remove('ufo-intro')},9000)}}catch(e){}",
+            __html: "try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!sessionStorage.getItem('ufo.intro')){var d=document.documentElement;d.classList.add('ufo-intro','ufo-boot');setTimeout(function(){d.classList.remove('ufo-boot','ufo-boot-exit')},4500);setTimeout(function(){d.classList.remove('ufo-intro')},11000)}}catch(e){}",
           }}
         />
       </head>
@@ -80,6 +82,7 @@ export default function RootLayout({ children }) {
           >
             Pular para o conteúdo
           </a>
+          <Loader />
           <StarField />
           <ScrollProgress />
           <UFO />

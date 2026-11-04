@@ -48,7 +48,10 @@ export default function CrewBadge() {
   const onLeave = () => { px.set(0.5); py.set(0.5); };
 
   return (
-    <div className="relative w-[300px] mx-auto select-none" style={{ perspective: 900, height: strap + 420 }}>
+    /* The entrance is a CSS keyframe on these wrappers, not a framer spring
+       on the drag values: it runs on the compositor, so it stays smooth while
+       the main thread is busy hydrating and booting the 3D saucer. */
+    <div className="badge-drop relative w-[300px] mx-auto select-none" style={{ perspective: 900, height: strap + 420 }}>
       {/* strap */}
       <motion.div
         aria-hidden="true"
@@ -70,10 +73,8 @@ export default function CrewBadge() {
         whileDrag={{ cursor: 'grabbing', scale: 1.03 }}
         className="absolute left-1/2 -ml-[140px] w-[280px] cursor-grab touch-none"
         style={{ x, y, top: strap, rotate: swing, transformOrigin: '50% 0%' }}
-        initial={reduce ? false : { y: -420, rotate: -12 }}
-        animate={{ y: 0, rotate: 0 }}
-        transition={{ type: 'spring', stiffness: 90, damping: 11, delay: 0.9 }}
       >
+        <div className="badge-swing">
         {/* clip */}
         <div className="mx-auto -mb-2 relative z-10 w-14 h-6 rounded-md border border-border bg-surface flex items-center justify-center">
           <div className="w-7 h-1.5 rounded-full bg-bg" />
@@ -136,6 +137,7 @@ export default function CrewBadge() {
             }}
           />
         </motion.div>
+        </div>
       </motion.div>
 
       <p className="absolute bottom-0 right-0 font-mono text-[10px] text-dim rotate-[-8deg]">↔ {t('badgeDrag')}</p>

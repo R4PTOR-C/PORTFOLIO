@@ -349,7 +349,12 @@ export default function UFO() {
        or if WebGL is unavailable, the pixel sprite draws the ships. */
     let three = null;
     let disposed = false;
-    if (glRef.current) {
+    /* Booting three.js blocks the main thread for a few hundred ms. On the
+       first visit the loader curtain hides that; on a reload it would land
+       on top of the badge drop, so wait until the page has settled. */
+    let bootTimer = 0;
+    const startThree = () => {
+      if (disposed || !glRef.current) return;
       import('./ufoShips3d')
         .then(({ createShipLayer }) => createShipLayer(glRef.current))
         .then((layer) => {
@@ -358,6 +363,10 @@ export default function UFO() {
           three.resize(g.w, g.h, dpr);
         })
         .catch(() => { /* keep the sprite */ });
+    };
+    if (glRef.current) {
+      if (document.documentElement.classList.contains('ufo-boot')) startThree();
+      else bootTimer = setTimeout(() => (window.requestIdleCallback || setTimeout)(startThree, { timeout: 1500 }), 2200);
     }
 
     /* ── sizing ──────────────────────────────────────────────────────────── */
@@ -486,6 +495,9 @@ export default function UFO() {
       const p = g.p;
 
       if (a.kind === 'intro') {
+        if (document.documentElement.classList.contains('ufo-boot')) {
+          return { x: g.w * 0.5, y: -140 };   // wait off-screen while the loader plays
+        }
         a.wait -= dt;
         const els = introEls();
         if (a.i >= els.length || g.scrollY > g.h * 0.6) { finishIntro(); return null; }
@@ -543,6 +555,8 @@ export default function UFO() {
 
     if (document.documentElement.classList.contains('ufo-intro')) {
       g.act = { kind: 'intro', i: 0, wait: 0.55, cd: 0, started: false };
+      /* coming out of the loader: enter from above the viewport */
+      if (document.documentElement.classList.contains('ufo-boot')) { g.p.x = g.w * 0.5; g.p.y = -140; }
     }
 
     /* ── waves ───────────────────────────────────────────────────────────── */
@@ -1272,6 +1286,7 @@ export default function UFO() {
     return () => {
       cancelAnimationFrame(raf);
       disposed = true;
+      clearTimeout(bootTimer);
       if (three) three.dispose();
       window.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener('pointerdown', onPointerDown);
