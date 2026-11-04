@@ -1,116 +1,131 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const navLinks = [
-  { key: 'navAbout',      href: '#about'      },
-  { key: 'navSkills',     href: '#skills'     },
-  { key: 'navExperience', href: '#experience' },
-  { key: 'navEducation',  href: '#education'  },
+  { key: 'navAbout',    id: 'about'      },
+  { key: 'navFenrys',   id: 'fenrys'     },
+  { key: 'navProjects', id: 'projects'   },
+  { key: 'navStack',    id: 'skills'     },
+  { key: 'navLog',      id: 'experience' },
+  { key: 'navContact',  id: 'contact'    },
 ];
 
+/* A floating HUD pill instead of a full-width bar. The active section gets a
+   neon capsule that slides between links (shared layoutId), so the nav shows
+   where you are without a second indicator. */
 export default function Navbar() {
   const { t, i18n } = useTranslation();
-  const [scrolled,  setScrolled]  = useState(false);
-  const [hidden,    setHidden]    = useState(false);
-  const [menuOpen,  setMenuOpen]  = useState(false);
-  const lastY = useRef(0);
+  const [active, setActive] = useState('');
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => {
-      const y = window.scrollY;
-      setScrolled(y > 60);
-      if (y < 80) { setHidden(false); }
-      else if (y > lastY.current + 6)  setHidden(true);
-      else if (y < lastY.current - 6)  setHidden(false);
-      lastY.current = y;
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    const els = navLinks.map((l) => document.getElementById(l.id)).filter(Boolean);
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) if (e.isIntersecting) setActive(e.target.id);
+    }, { rootMargin: '-45% 0px -50% 0px' });
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
   }, []);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e) => { if (e.key === 'Escape') setMenuOpen(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [menuOpen]);
 
   const toggleLang = () => {
     const next = i18n.language === 'pt' ? 'en' : 'pt';
     i18n.changeLanguage(next);
     localStorage.setItem('i18nextLng', next);
   };
+  const langLabel = i18n.language === 'pt' ? 'EN' : 'PT';
 
   return (
     <motion.header
-      initial={{ y: -70, opacity: 0 }}
-      animate={{ y: hidden ? -80 : 0, opacity: 1 }}
-      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-      className="fixed top-0 inset-x-0 z-50"
+      initial={{ y: -40, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+      className="fixed top-3 md:top-5 inset-x-0 z-50 flex justify-center px-3 pointer-events-none"
     >
-      <div className={`transition-all duration-300 ${
-        scrolled
-          ? 'bg-bg/80 backdrop-blur-xl border-b border-border shadow-lg shadow-black/30'
-          : 'bg-transparent'
-      }`}>
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div className="pointer-events-auto flex items-center gap-1 rounded-full border border-border bg-bg/70 backdrop-blur-xl pl-2 pr-1.5 py-1.5 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.6)]">
+        <a
+          href="#"
+          onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+          aria-label="Rafael Caldas, topo"
+          className="display glitch grid place-items-center w-9 h-9 rounded-full bg-surface text-neon text-sm"
+        >
+          R
+        </a>
 
-          <a
-            href="#"
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="flex items-center gap-1.5 font-bold text-lg text-text tracking-tight"
-          >
-            <span className="text-blue-mid">Rafael</span>
-            <span className="neon-text text-sm">•</span>
-          </a>
-
-          <nav className="hidden md:flex items-center gap-6">
-            {navLinks.map((link) => (
-              <a key={link.key} href={link.href}
-                className="relative text-sm text-muted hover:text-text transition-colors duration-200 group py-1"
-              >
-                {t(link.key)}
-                <span className="absolute bottom-0 left-0 w-0 h-px bg-neon group-hover:w-full transition-all duration-300 shadow-[0_0_6px_rgba(0,229,160,0.6)]" />
-              </a>
-            ))}
-            <button onClick={toggleLang}
-              className="ml-2 text-xs font-mono font-semibold px-3 py-1.5 rounded border border-border text-muted hover:text-neon hover:border-neon/40 transition-all duration-200"
+        <nav className="hidden md:flex items-center" aria-label="Principal">
+          {navLinks.map((link) => (
+            <a
+              key={link.key}
+              href={`#${link.id}`}
+              className={`relative px-4 py-2 text-[13px] rounded-full transition-colors duration-200 ${
+                active === link.id ? 'text-bg' : 'text-muted hover:text-text'
+              }`}
             >
-              {i18n.language === 'pt' ? 'EN' : 'PT'}
-            </button>
-          </nav>
+              {active === link.id && (
+                <motion.span
+                  layoutId="nav-active"
+                  className="absolute inset-0 rounded-full bg-neon"
+                  transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+                />
+              )}
+              <span className="relative">{t(link.key)}</span>
+            </a>
+          ))}
+        </nav>
 
-          <div className="flex md:hidden items-center gap-3">
-            <button onClick={toggleLang}
-              className="text-xs font-mono px-2.5 py-1 rounded border border-border text-muted hover:text-neon hover:border-neon/40 transition-all duration-200"
-            >
-              {i18n.language === 'pt' ? 'EN' : 'PT'}
-            </button>
-            <button onClick={() => setMenuOpen(!menuOpen)} className="text-muted hover:text-neon transition-colors p-1">
-              <div className="w-5 flex flex-col gap-1.5">
-                <motion.span animate={menuOpen ? { rotate: 45, y: 6 }  : { rotate: 0, y: 0 }}  className="block h-px bg-current origin-center" />
-                <motion.span animate={menuOpen ? { opacity: 0 }        : { opacity: 1 }}        className="block h-px bg-current" />
-                <motion.span animate={menuOpen ? { rotate: -45, y: -6 }: { rotate: 0, y: 0 }}  className="block h-px bg-current origin-center" />
-              </div>
-            </button>
+        <button
+          onClick={toggleLang}
+          aria-label={`Switch language to ${langLabel}`}
+          className="ml-1 font-mono text-[11px] font-semibold w-9 h-9 rounded-full border border-border text-muted hover:text-neon hover:border-neon/40 transition-colors"
+        >
+          {langLabel}
+        </button>
+
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-expanded={menuOpen}
+          aria-controls="mobile-menu"
+          aria-label={menuOpen ? 'Fechar menu' : 'Abrir menu'}
+          className="md:hidden w-9 h-9 grid place-items-center rounded-full text-muted hover:text-neon"
+        >
+          <div className="w-4 flex flex-col gap-1.5">
+            <motion.span animate={menuOpen ? { rotate: 45, y: 4 } : { rotate: 0, y: 0 }} className="block h-px bg-current" />
+            <motion.span animate={menuOpen ? { rotate: -45, y: -3 } : { rotate: 0, y: 0 }} className="block h-px bg-current" />
           </div>
-        </div>
+        </button>
       </div>
 
       <AnimatePresence>
         {menuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
+          <motion.nav
+            id="mobile-menu"
+            aria-label="Principal (mobile)"
+            initial={{ opacity: 0, y: -10, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.97 }}
             transition={{ duration: 0.2 }}
-            className="md:hidden bg-surface/95 backdrop-blur-xl border-b border-border overflow-hidden"
+            className="pointer-events-auto md:hidden absolute top-14 inset-x-3 rounded-3xl border border-border bg-surface/95 backdrop-blur-xl p-3 flex flex-col"
           >
-            <div className="flex flex-col px-6 py-5 gap-4">
-              {navLinks.map((link) => (
-                <a key={link.key} href={link.href} onClick={() => setMenuOpen(false)}
-                  className="text-sm text-muted hover:text-neon transition-colors py-1"
-                >
-                  {t(link.key)}
-                </a>
-              ))}
-            </div>
-          </motion.div>
+            {navLinks.map((link, i) => (
+              <a
+                key={link.key}
+                href={`#${link.id}`}
+                onClick={() => setMenuOpen(false)}
+                className="display flex items-baseline gap-3 px-3 py-3 text-xl text-text hover:text-neon"
+              >
+                <span className="font-mono text-xs text-dim">0{i + 1}</span>
+                {t(link.key)}
+              </a>
+            ))}
+          </motion.nav>
         )}
       </AnimatePresence>
     </motion.header>

@@ -1,177 +1,96 @@
 'use client';
-import { useState } from 'react';
+import { useRef } from 'react';
+import { motion, useScroll, useSpring, useTransform, useReducedMotion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { motion, AnimatePresence } from 'framer-motion';
-import FadeIn from '@/components/FadeIn';
+import Letters, { LetterHeading } from '@/components/Letters';
 
-const experiences = [
-  {
-    companyKey:     'exp2Company',
-    companyFullKey: null,
-    roleKey:        'exp2Role',
-    periodKey:      'exp2Period',
-    descKeys:       ['exp2Desc1', 'exp2Desc2', 'exp2Desc3'],
-    current:        true,
-  },
-  {
-    companyKey:     'exp1Company',
-    companyFullKey: 'exp1CompanyFull',
-    roleKey:        'exp1Role',
-    periodKey:      'exp1Period',
-    descKeys:       ['exp1Desc1', 'exp1Desc2', 'exp1Desc3'],
-    current:        false,
-  },
+/* Newest first. Education closes the log as the first stop. */
+const LOG = [
+  { company: 'exp2Company', full: 'exp2CompanyFull', role: 'exp2Role', period: 'exp2Period', desc: ['exp2Desc1', 'exp2Desc2', 'exp2Desc3'], now: true, tone: '#00e5a0' },
+  { company: 'exp1Company', full: 'exp1CompanyFull', role: 'exp1Role', period: 'exp1Period', desc: ['exp1Desc1', 'exp1Desc2', 'exp1Desc3'], tone: '#6ba6fb' },
+  { company: 'eduCompany', role: 'eduRole', period: 'eduPeriod', desc: ['eduStatusLine'], tone: '#ff2bd6' },
 ];
+
+function Entry({ e, i }) {
+  const { t } = useTranslation();
+  const reduce = useReducedMotion();
+  return (
+    <motion.li
+      initial={reduce ? false : { opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-15%' }}
+      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      className="group relative pl-12 md:pl-20 py-10 md:py-14 border-b border-border-dim"
+    >
+      {/* waypoint on the timeline */}
+      <span
+        aria-hidden="true"
+        className="absolute left-[11px] md:left-[27px] top-[3.4rem] md:top-[4.4rem] w-3.5 h-3.5 rounded-full border-2 bg-bg transition-transform duration-300 group-hover:scale-150"
+        style={{ borderColor: e.tone }}
+      />
+      {/* hover sweep */}
+      <span aria-hidden="true" className="absolute inset-0 -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(90deg, ${e.tone}12, transparent 60%)` }} />
+
+      <div className="grid md:grid-cols-12 gap-x-10 gap-y-5">
+        <div className="md:col-span-5">
+          <p className="font-mono text-xs uppercase tracking-[0.18em] flex items-center gap-2" style={{ color: e.tone }}>
+            LOG {String(LOG.length - i).padStart(2, '0')} · {t(e.period)}
+            {e.now && (
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-neon/40 px-2 py-0.5 text-[10px] text-neon normal-case tracking-normal">
+                <span className="pulse-dot w-1.5 h-1.5 rounded-full bg-neon" aria-hidden="true" />{t('expNow')}
+              </span>
+            )}
+          </p>
+          <h3 className="display text-3xl md:text-5xl mt-4 text-text leading-[0.95] transition-colors duration-300 group-hover:text-white">
+            <span className="sr-only">{t(e.company)}</span>
+            <span aria-hidden="true"><Letters text={t(e.company)} /></span>
+          </h3>
+          {e.full && <p className="mt-3 text-sm text-dim">{t(e.full)}</p>}
+          <p className="mt-4 font-mono text-sm text-muted">{t(e.role)}</p>
+        </div>
+
+        <ul className="md:col-span-7 space-y-3 md:pt-8">
+          {e.desc.map((k) => (
+            <li key={k} className="flex gap-3 text-muted leading-relaxed">
+              <span aria-hidden="true" className="mt-2.5 w-4 h-px shrink-0" style={{ background: e.tone }} />
+              {t(k)}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </motion.li>
+  );
+}
 
 export default function Experience() {
   const { t } = useTranslation();
-  const [active, setActive] = useState(0);
-  const exp = experiences[active];
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 70%', 'end 60%'] });
+  const prog = useSpring(scrollYProgress, { stiffness: 140, damping: 26 });
+  const shipTop = useTransform(prog, (v) => `${v * 100}%`);
 
   return (
-    <section id="experience" className="py-20 md:py-28 px-6 border-t border-border-dim">
-      <div className="max-w-6xl mx-auto">
+    <section id="experience" className="relative section rule">
+      <div className="wrap">
+        <p className="kicker">{t('expKicker')}</p>
+        <LetterHeading text={t('experienceTitle')} className="display h-section mt-6 text-text" />
 
-        <FadeIn>
-          <div className="section-tag">{t('experienceTag')}</div>
-          <h2 className="text-3xl md:text-4xl font-bold text-text">{t('experienceTitle')}</h2>
-        </FadeIn>
+        <div ref={ref} className="relative mt-14">
+          {/* timeline rail, filled as you scroll, with a tiny saucer riding it */}
+          <div aria-hidden="true" className="absolute left-[17px] md:left-[33px] top-0 bottom-0 w-px bg-border" />
+          <motion.div aria-hidden="true" className="absolute left-[17px] md:left-[33px] top-0 w-px origin-top bg-gradient-to-b from-neon via-blue-light to-magenta" style={{ scaleY: prog, height: '100%' }} />
+          <motion.div aria-hidden="true" className="absolute left-[5px] md:left-[21px] -mt-3 text-xl" style={{ top: shipTop }}>
+            <svg viewBox="0 0 32 20" className="w-6 h-4 drop-shadow-[0_0_8px_rgba(0,229,160,0.8)]">
+              <ellipse cx="16" cy="7" rx="6" ry="5" fill="#2b9ada" />
+              <ellipse cx="16" cy="12" rx="15" ry="4" fill="#c4cacf" />
+              <ellipse cx="16" cy="13.5" rx="9" ry="2" fill="#30363d" />
+            </svg>
+          </motion.div>
 
-        {/* ── DESKTOP: tab sidebar ── */}
-        <div className="hidden md:flex mt-12 gap-12">
-
-          {/* Left: company tabs */}
-          <div className="relative flex flex-col border-l border-border-dim shrink-0" style={{ minWidth: 230 }}>
-            {experiences.map((e, i) => (
-              <button
-                key={e.companyKey}
-                onClick={() => setActive(i)}
-                className="relative text-left px-6 py-5 focus:outline-none"
-              >
-                {active === i && (
-                  <motion.div
-                    layoutId="exp-indicator"
-                    className="absolute left-0 inset-y-0 w-0.5 rounded-full"
-                    style={{ background: e.current ? '#00e5a0' : '#60a5fa' }}
-                    transition={{ type: 'spring', stiffness: 500, damping: 38 }}
-                  />
-                )}
-                <span className={`block text-sm font-mono font-semibold transition-colors duration-200 ${
-                  active === i ? (e.current ? 'text-neon' : 'text-blue-light') : 'text-dim hover:text-muted'
-                }`}>
-                  {t(e.companyKey)}
-                </span>
-                <span className="block text-[11px] text-dim font-mono mt-0.5">{t(e.periodKey)}</span>
-              </button>
-            ))}
-          </div>
-
-          {/* Right: detail panel */}
-          <div className="flex-1 min-w-0">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={active}
-                initial={{ opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <div className="flex flex-wrap items-start justify-between gap-3 mb-1">
-                  <div>
-                    <h3 className="text-text font-bold text-xl leading-snug">{t(exp.roleKey)}</h3>
-                    <p className={`text-sm font-mono font-semibold mt-1 ${exp.current ? 'text-neon' : 'text-blue-light'}`}>
-                      {t(exp.companyKey)}
-                      {exp.companyFullKey && (
-                        <span className="text-dim font-normal ml-2 text-xs">— {t(exp.companyFullKey)}</span>
-                      )}
-                    </p>
-                  </div>
-                  <span className={`shrink-0 text-xs font-mono font-semibold px-3 py-1.5 rounded-full border ${
-                    exp.current ? 'border-neon/30 text-neon bg-neon/5' : 'border-border text-dim bg-surface'
-                  }`}>
-                    {t(exp.periodKey)}
-                  </span>
-                </div>
-
-                <div className="h-px bg-border-dim my-5" />
-
-                <ul className="flex flex-col gap-3">
-                  {exp.descKeys.map((key, j) => (
-                    <motion.li
-                      key={key}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: j * 0.08, duration: 0.25 }}
-                      className="flex gap-3 text-sm text-muted leading-relaxed"
-                    >
-                      <span className={`mt-1 shrink-0 text-xs ${exp.current ? 'text-neon' : 'text-blue-mid'}`}>▸</span>
-                      {t(key)}
-                    </motion.li>
-                  ))}
-                </ul>
-
-                {exp.current && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.28 }}
-                    className="mt-6 flex items-center gap-2"
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full bg-neon pulse-dot" />
-                    <span className="text-[11px] font-mono text-neon/60 tracking-widest uppercase">{t('aboutActive')}</span>
-                  </motion.div>
-                )}
-              </motion.div>
-            </AnimatePresence>
-          </div>
+          <ol>
+            {LOG.map((e, i) => <Entry key={e.company} e={e} i={i} />)}
+          </ol>
         </div>
-
-        {/* ── MOBILE: timeline cards ── */}
-        <div className="md:hidden mt-10 relative pl-5">
-          <div className="absolute left-0 top-3 bottom-3 w-px" style={{ background: 'rgba(20,34,56,0.8)' }} />
-
-          <div className="flex flex-col gap-8">
-            {experiences.map((e, i) => (
-              <FadeIn key={e.companyKey} delay={i * 0.1} direction="right">
-                <div className="relative">
-                  {e.current ? (
-                    <span className="absolute -left-[1.65rem] top-2 w-3 h-3 rounded-full bg-neon pulse-dot" />
-                  ) : (
-                    <span className="absolute -left-[1.65rem] top-2 w-3 h-3 rounded-full bg-blue-mid/60 border border-blue-mid" />
-                  )}
-                  <div className="card rounded-2xl p-6">
-                    <div className="flex flex-wrap items-start justify-between gap-3 mb-1">
-                      <div>
-                        <h3 className="text-text font-bold text-lg leading-snug">{t(e.companyKey)}</h3>
-                        {e.companyFullKey && (
-                          <p className="text-dim text-xs mt-0.5">{t(e.companyFullKey)}</p>
-                        )}
-                      </div>
-                      <span className={`shrink-0 text-xs font-mono font-semibold px-3 py-1.5 rounded-full border ${
-                        e.current ? 'border-neon/30 text-neon bg-neon/5' : 'border-border text-dim bg-surface'
-                      }`}>
-                        {t(e.periodKey)}
-                      </span>
-                    </div>
-                    <p className={`text-sm font-semibold font-mono tracking-wide mb-4 ${e.current ? 'text-neon' : 'text-blue-light'}`}>
-                      {t(e.roleKey)}
-                    </p>
-                    <div className="h-px bg-border-dim mb-4" />
-                    <ul className="flex flex-col gap-3">
-                      {e.descKeys.map((key) => (
-                        <li key={key} className="flex gap-3 text-sm text-muted leading-relaxed">
-                          <span className={`mt-1 shrink-0 text-xs ${e.current ? 'text-neon' : 'text-blue-mid'}`}>▸</span>
-                          {t(key)}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-
       </div>
     </section>
   );

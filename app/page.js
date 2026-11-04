@@ -1,20 +1,26 @@
 import Navbar from "@/components/Navbar";
-import SplitHero from "@/components/SplitHero";
+import Hero from "@/components/Hero";
+import Marquee from "@/components/Marquee";
 import About from "@/components/About";
-import Skills from "@/components/Skills";
+import Fenrys from "@/components/Fenrys";
+import Stack from "@/components/Stack";
+import Projects from "@/components/Projects";
 import Experience from "@/components/Experience";
-import Education from "@/components/Education";
+import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
-    <main>
+    <main className="relative z-10">
       <Navbar />
-      <SplitHero />
+      <Hero />
+      <Marquee />
       <About />
-      <Skills />
+      <Fenrys />
+      <Projects />
+      <Stack />
       <Experience />
-      <Education />
+      <Contact />
       <Footer />
     </main>
   );

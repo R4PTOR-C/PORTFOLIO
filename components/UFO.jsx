@@ -1,11 +1,15 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 /* ═══════════════════════════════════════════════════════════════════════════
    UFO — canvas game overlay
    ───────────────────────────────────────────────────────────────────────────
    IDLE    : the saucer patrols the top strip, banking into its own drift and
              reacting to scroll velocity. Click it to boot ARCADE MODE.
+   LETTERS : the hero headline is made of letters the saucer owns. It drops
+             them in one by one on the first visit, and now and then (or
+             when a letter is clicked) it beams one up and lets it fall back.
    ARCADE  : full game loop — pointer steering with a critically damped spring,
              auto-aimed twin cannons, Galaga-ish enemy waves, drops, combo,
              hit-stop, screen shake. ESC exits.
@@ -39,38 +43,55 @@ function springStep(cur, vel, target, stiffness, damping, dt) {
 }
 
 /* ─────────────────────────── pixel saucer sprite ────────────────────────── */
-/* 45x15 cells, refined from the "Disco Voador" design canvas: symmetric about
-   the centre column, glass dome up top, lit rim, emitter lens underneath. */
+/* 67x25 cells, generated (scratchpad pixel/gen.cjs) from ellipses lit from
+   the upper left: glass dome with a curved glint, banded silver hull with a
+   pressed seam, rim lamps spaced by angle so they bunch toward the edges,
+   dark belly with ports, emitter lens underneath. */
 const SPR = [
-  '..................BBBBBBBBB..................',
-  '................BHHHDDDDDDDDB................',
-  '..............BHHGHHDDDDDDDDDDDB.............',
-  '.............BHGGHDDDDDDDDDDDDDDB............',
-  '............BHGHDDDDDDDDDDDDDDDHB............',
-  '............BHDDDDDDDDDDDDDDDDDHB............',
-  '............BDDDDDDDDDDDDDDDDDDDB............',
-  '.........BCCCCCCCCCCCCCCCFFFFFFFFFFB.........',
-  '......BFFFCCCCCCCCCCCCCCCCCFFFFFFFFFEEB......',
-  '..BAEIIECCCCCCCCCCCFFFFFFFCCCCCCCCCCCEIIEAB..',
-  '..BAAEEEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEEEAAB..',
-  '....BAAAAABBBBBBBBBBBBBBBBBBBBBBBBBAAAAAB....',
-  '........BAIIABBBBBBBBBBBBBBBBBBBAIIAB........',
-  '.............BAAAAAHHHHHHHAAAAAB.............',
-  '..................BHGGGGGHB..................',
+  '..............................BBBBBBB..............................',
+  '...........................BBBDHJJJJJBBB...........................',
+  '.........................BBGGDHDDDDDDJJJBB.........................',
+  '........................BGGDDDDDDDDDDDDJJJB........................',
+  '.......................BGHHHHDDDDDDDDDDDJJJB.......................',
+  '......................BDGHHHHDDDDDDDDDDDHJJJB......................',
+  '.....................BDGHHHHHDDDDDDDDDDDJHJJJB.....................',
+  '.....................BHHHHHHHDDDDDDDDDDDJJHJJB.....................',
+  '....................BDHHHHHHDDDDDDDDDDDDJJJJJJB....................',
+  '...................BBJDDDDDJJJJJJJJJJJJJJJJJJJBB...................',
+  '................BBBEAAAAAAAAAAAAAAAAAAAAAAAAAAAEBBB................',
+  '...........BBBBBWWWWWWCCCCCCCCCCCCCCCFFFFFFFFFFFFFFBBBBB...........',
+  '.......BBBBWWWWWWWCCCCCCCCCCCCCCCCCCCFFFFFFFFFFFFFFFFEEEBBBB.......',
+  '....BBBWWWWWWWWWFFFFCCCCCCCCCCCCCCCCCFFFFFFFFFFEEEEFFEEEEEEEBBB....',
+  '..BBWWWCCCCCCCCCCCFFFFFFFFFFFFFFFFFFFEEEEEEEEEEEEEEEEEEEEEEEEEEBB..',
+  '.BFWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWCCCCCCCCCCCCCCCCCCCCCCCFB.',
+  '.BAAAIAAAIIAAAAIIAAAAAAIIAAAAAAAAIIAAAAAAAIIAAAAAAIIAAAAIIAAAIAAAB.',
+  '.BKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKB.',
+  '..BBKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKNNNNNNNNNNNNNNNNNNNNNBB..',
+  '....BBBBNNNNNNLNNNNNNNLNNNNNNNNNNNNNNNNNNNNNLNNNNNNNLNNNNNNBBBB....',
+  '........BBBBNNNNNNNNNNNNNNNLNNNNNNNNNNNLNNNNNNNNNNNNNNNBBBB........',
+  '............BBBBBNNNNNNNNAAAAAAAAAAAAAAAAANNNNNNNNBBBBB............',
+  '.................BBBBBBBBLLLLLLLHHHLLLLLLLBBBBBBBB.................',
+  '.........................BBBHHHGGGGGHHHBBB.........................',
+  '............................BBBBBBBBBBB............................',
 ];
-const SPR_W = 45, SPR_H = 15;
+const SPR_W = 67, SPR_H = 25;
 const PX = 80 / SPR_W;            /* keeps the old body half-width of 40 */
-const SPR_OY = -9.5 * PX + 1;     /* row 9.5 (the rim) sits on the local origin */
+const RIM_ROW = 16.5;             /* the lamp row sits on the local origin */
+const LENS_ROW = 23.5;
+const SPR_OY = -RIM_ROW * PX + 1;
+const FIN_PX = 80 / 45;           /* mothership fins keep their original block size */
 
 /* Player and foe read the same sprite through different palettes. */
 const PAL = {
-  ship: { B: '#14161a', A: '#4d545c', E: '#7e858d', F: '#a8aeb5', C: '#d5dade',
-          D: '#2b9ada', H: '#7cc8f0', G: '#ffffff', I: '#e3cb52' },
-  foe:  { B: '#1a0404', A: '#4a1010', E: '#7a2222', F: '#a03535', C: '#c85a5a',
-          D: '#c02828', H: '#ff6b6b', G: '#ffd0d0', I: '#ff9d2e' },
+  ship: { B: '#14161a', K: '#30363d', N: '#23282e', A: '#3d444c', E: '#5f666e',
+          F: '#8e959c', C: '#c4cacf', W: '#eef1f3', J: '#1a5f99', D: '#2b9ada',
+          H: '#7cc8f0', G: '#ffffff', L: '#4fb3e8', I: '#ffb547' },
+  foe:  { B: '#1a0404', K: '#2e0a0a', N: '#220707', A: '#4a1010', E: '#7a2222',
+          F: '#a03535', C: '#c85a5a', W: '#e88a8a', J: '#7a1414', D: '#c02828',
+          H: '#ff6b6b', G: '#ffd0d0', L: '#e04848', I: '#ff9d2e' },
 };
 
-/* Bake the grid into horizontal runs once — ~70 fillRects instead of 675. */
+/* Bake the grid into horizontal runs once — ~160 fillRects instead of 933. */
 const SPR_RUNS = [];
 const SPR_LAMPS = [];
 SPR.forEach((row, ry) => {
@@ -107,6 +128,7 @@ function drawSaucer(ctx, o) {
     accent = C.neon,
     lights = [C.neon, C.blue, C.violet],
     thrust = 0, beam = 0, flash = 0, spin = 0, big = false, foe = false,
+    solid = false,                   // the WebGL layer draws the hull itself
   } = o;
 
   ctx.save();
@@ -169,6 +191,8 @@ function drawSaucer(ctx, o) {
   ctx.ellipse(0, 4, 62, 20, 0, 0, TAU);
   ctx.fill();
 
+  if (solid) { ctx.restore(); return; }
+
   ctx.save();
   ctx.rotate(spin);
 
@@ -182,12 +206,12 @@ function drawSaucer(ctx, o) {
     ctx.fillStyle = pal.A;
     for (const s of [-1, 1]) {
       for (let i = 0; i < 5; i++) {
-        const w = (5 - i) * PX;
-        ctx.fillRect(s * (38 * PX / 1.78) + (s < 0 ? -w : 0) + s * i * PX, -1 - i * PX, w, PX + 0.5);
+        const w = (5 - i) * FIN_PX;
+        ctx.fillRect(s * 38 + (s < 0 ? -w : 0) + s * i * FIN_PX, -1 - i * FIN_PX, w, FIN_PX + 0.5);
       }
     }
     ctx.fillStyle = pal.B;
-    for (const s of [-1, 1]) ctx.fillRect(s * 40 - (s < 0 ? PX : 0), -1, PX, PX);
+    for (const s of [-1, 1]) ctx.fillRect(s * 40 - (s < 0 ? FIN_PX : 0), -1, FIN_PX, FIN_PX);
   }
 
   /* rim + belly lamps glow */
@@ -205,7 +229,7 @@ function drawSaucer(ctx, o) {
   /* emitter lens bloom under the belly */
   ctx.fillStyle = accent;
   ctx.globalAlpha = A * (0.25 + pulse * 0.3);
-  ctx.beginPath(); ctx.ellipse(0, SPR_OY + 14.5 * PX, 7, 3.5, 0, 0, TAU); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(0, SPR_OY + LENS_ROW * PX, 7, 3.5, 0, 0, TAU); ctx.fill();
   ctx.globalAlpha = A;
   ctx.globalCompositeOperation = 'source-over';
 
@@ -249,10 +273,44 @@ function drawSaucer(ctx, o) {
 /* ──────────────────────────────── component ─────────────────────────────── */
 
 export default function UFO() {
+  const { t } = useTranslation();
   const canvasRef = useRef(null);
+  const glRef = useRef(null);
+  const backdropRef = useRef(null);
   const hitRef = useRef(null);
   const gRef = useRef(null);
   const [arcade, setArcade] = useState(false);
+  const [showHint, setShowHint] = useState(false);
+
+  /* The saucer is the best thing on this page and it was invisible as an
+     affordance: the only signal was a native title tooltip on hover, which
+     does not exist on touch at all. Surface it once, after the visitor has
+     shown they are actually reading, then never again. */
+  useEffect(() => {
+    if (localStorage.getItem('ufo.seen')) return;
+
+    const anchor = document.getElementById('about');
+    if (!anchor) return;
+
+    let timer = null;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      observer.disconnect();
+      setShowHint(true);
+      timer = setTimeout(() => setShowHint(false), 6000);
+    }, { threshold: 0.2 });
+
+    observer.observe(anchor);
+    return () => {
+      observer.disconnect();
+      if (timer) clearTimeout(timer);
+    };
+  }, []);
+
+  const dismissHint = () => {
+    setShowHint(false);
+    try { localStorage.setItem('ufo.seen', '1'); } catch { /* ignore */ }
+  };
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -265,7 +323,7 @@ export default function UFO() {
       mode: 'idle',            // idle | intro | play | over
       t: 0, timeScale: 1, hitStop: 0,
       w: window.innerWidth, h: window.innerHeight,
-      shake: 0, flashScreen: 0, ui: 1, narrow: false,
+      shake: 0, shakeX: 0, shakeY: 0, flashScreen: 0, ui: 1, narrow: false,
       scrollY: window.scrollY, scrollVel: 0, docH: 1,
       pointer: { x: window.innerWidth * 0.5, y: window.innerHeight * 0.5, down: false, seen: false },
       hover: 0, hoverTarget: 0,
@@ -279,11 +337,28 @@ export default function UFO() {
       score: 0, hi: 0, combo: 0, comboT: 0,
       wave: 0, waveClearT: 0, spawnQ: [],
       banner: '', bannerT: 0, introT: 0, overT: 0, hintT: 0,
+      act: null, mischiefT: rand(14, 22),
       reduced,
     };
     gRef.current = g;
 
     try { g.hi = parseInt(localStorage.getItem('ufo.hi') || '0', 10) || 0; } catch { /* ignore */ }
+
+    /* ── 3D ships ────────────────────────────────────────────────────────── */
+    /* Loaded after first paint and only in the browser. Until it is ready,
+       or if WebGL is unavailable, the pixel sprite draws the ships. */
+    let three = null;
+    let disposed = false;
+    if (glRef.current) {
+      import('./ufoShips3d')
+        .then(({ createShipLayer }) => createShipLayer(glRef.current))
+        .then((layer) => {
+          if (disposed) { layer.dispose(); return; }
+          three = layer;
+          three.resize(g.w, g.h, dpr);
+        })
+        .catch(() => { /* keep the sprite */ });
+    }
 
     /* ── sizing ──────────────────────────────────────────────────────────── */
     let dpr = 1;
@@ -300,6 +375,7 @@ export default function UFO() {
          whole battlefield, not a cropped zoom of the desktop one. */
       g.ui = clamp(Math.min(g.w, g.h) / 900, 0.55, 1);
       g.narrow = g.w < 720;
+      if (three) three.resize(g.w, g.h, dpr);
     };
     resize();
 
@@ -335,6 +411,139 @@ export default function UFO() {
       addShake(0.3 * scale);
       if (!g.reduced) g.hitStop = Math.max(g.hitStop, 0.07 * scale);
     };
+
+    /* ── headline letters ────────────────────────────────────────────────── */
+    /* Letters are plain spans; we only ever write their inline transform.
+       el._ufo remembers the offset we applied so the resting position can
+       be read back from getBoundingClientRect at any time. */
+    const letterEls = () => Array.from(document.querySelectorAll('[data-ufo-letter]'));
+    const introEls = () => Array.from(document.querySelectorAll('[data-ufo-intro] [data-ufo-letter]'));
+    const restOf = (el) => {
+      const r = el.getBoundingClientRect();
+      const o = el._ufo || { x: 0, y: 0 };
+      return { x: r.left + r.width / 2 - o.x, y: r.top + r.height / 2 - o.y, top: r.top - o.y, h: r.height };
+    };
+    const setLetter = (el, x, y, rot = 0, sx = 1, sy = 1) => {
+      el._ufo = { x, y };
+      el.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) rotate(${rot.toFixed(1)}deg) scale(${sx.toFixed(3)}, ${sy.toFixed(3)})`;
+    };
+    const clearLetter = (el) => {
+      el._ufo = null;
+      el.style.transform = '';
+      el.style.transformOrigin = '';
+    };
+
+    /* falling letters: accelerate down from (fx, fy), land, squash, settle */
+    const FALL = 0.48, SETTLE = 0.45;
+    const falling = [];
+    const dropLetter = (el, fx, fy) => {
+      const prev = falling.findIndex((a) => a.el === el);
+      if (prev >= 0) falling.splice(prev, 1);
+      el.style.opacity = '1';
+      el.style.transformOrigin = '50% 90%';
+      falling.push({ el, t: 0, fx, fy, rot: rand(-28, 28), landed: false });
+      setLetter(el, fx, fy);
+    };
+    const stepLetters = (dt) => {
+      for (let i = falling.length - 1; i >= 0; i--) {
+        const a = falling[i];
+        if (!a.el.isConnected) { falling.splice(i, 1); continue; }
+        a.t += dt;
+        if (a.t < FALL) {
+          const k = a.t / FALL;
+          setLetter(a.el, a.fx * (1 - k) ** 2, a.fy * (1 - k * k), a.rot * (1 - k));
+          continue;
+        }
+        if (!a.landed) {
+          a.landed = true;
+          const r = restOf(a.el);
+          spark(r.x, r.top + r.h * 0.88, C.neon, 3, 70, 0.3, 1.3);
+        }
+        const q = (a.t - FALL) / SETTLE;
+        if (q >= 1) { clearLetter(a.el); falling.splice(i, 1); continue; }
+        const sy = 1 - 0.34 * Math.exp(-5 * q) * Math.cos(q * 12);
+        setLetter(a.el, 0, 0, 0, 1 + (1 - sy) * 0.6, sy);
+      }
+    };
+
+    const finishIntro = () => {
+      document.documentElement.classList.remove('ufo-intro');
+      for (const el of introEls()) el.style.opacity = '';
+      try { sessionStorage.setItem('ufo.intro', '1'); } catch { /* ignore */ }
+      if (g.act && g.act.kind === 'intro') g.act = null;
+      g.mischiefT = rand(16, 26);
+    };
+
+    const startAbduct = (el) => {
+      if (g.mode !== 'idle' || g.act || g.reduced) return;
+      g.act = { kind: 'abduct', el, phase: 'go', t: 0 };
+    };
+
+    /* What the saucer is busy with, if anything. Returns where it wants to
+       be this frame, or null to fall back to its normal patrol. */
+    const stepAct = (dt) => {
+      const a = g.act;
+      const p = g.p;
+
+      if (a.kind === 'intro') {
+        a.wait -= dt;
+        const els = introEls();
+        if (a.i >= els.length || g.scrollY > g.h * 0.6) { finishIntro(); return null; }
+        const r = restOf(els[a.i]);
+        const target = { x: r.x, y: Math.max(60, r.top - 72 * g.ui) };
+        const near = Math.abs(p.x - target.x) < 30 && Math.abs(p.y - target.y) < 44;
+        if (a.wait <= 0 && (near || a.started)) {
+          a.started = true;
+          p.beamHold = 0.25;
+          a.cd -= dt;
+          while (a.cd <= 0 && a.i < els.length) {
+            a.cd += 0.068;
+            const el = els[a.i++];
+            const rr = restOf(el);
+            dropLetter(el, p.x - rr.x, p.y + 16 * g.ui - rr.y);
+          }
+        }
+        return target;
+      }
+
+      /* abduct */
+      const el = a.el;
+      if (!el.isConnected) { g.act = null; return null; }
+      const r = restOf(el);
+      if (r.top < 30 || r.top > g.h - 30) {
+        if (a.phase !== 'go') dropLetter(el, el._ufo ? el._ufo.x : 0, el._ufo ? el._ufo.y : 0);
+        g.act = null;
+        return null;
+      }
+      const above = { x: r.x, y: Math.max(64, r.top - 96 * g.ui) + Math.sin(g.t * 3) * 3 };
+      if (a.phase === 'go') {
+        if (Math.hypot(p.x - above.x, p.y - above.y) < 18 && Math.hypot(p.vx, p.vy) < 140) {
+          a.phase = 'lift'; a.t = 0;
+          const prev = falling.findIndex((f) => f.el === el);
+          if (prev >= 0) falling.splice(prev, 1);
+          el.style.transformOrigin = '50% 50%';
+        }
+        return above;
+      }
+      a.t += dt;
+      p.beamHold = 0.2;
+      const k = 1 - (1 - clamp(a.t / 0.9, 0, 1)) ** 3;
+      const ox = p.x - r.x, oy = p.y + 22 * g.ui - r.y;
+      setLetter(el, ox * k + Math.sin(g.t * 7) * 3 * k, oy * k, Math.sin(g.t * 9) * 16 * k, 1 - 0.22 * k, 1 - 0.22 * k);
+      if (a.t > 1.7) {
+        p.beamHold = 0;
+        dropLetter(el, el._ufo.x, el._ufo.y);
+        p.vx += (Math.random() < 0.5 ? -1 : 1) * 520;   // and off it goes, whistling
+        p.vy -= 160;
+        g.act = null;
+        g.mischiefT = rand(20, 34);
+      }
+      return above;
+    };
+
+    if (document.documentElement.classList.contains('ufo-intro')) {
+      g.act = { kind: 'intro', i: 0, wait: 0.55, cd: 0, started: false };
+    }
 
     /* ── waves ───────────────────────────────────────────────────────────── */
     const slotPos = (i, count) => {
@@ -390,6 +599,11 @@ export default function UFO() {
     /* ── mode transitions ────────────────────────────────────────────────── */
     const enterArcade = () => {
       if (g.mode !== 'idle') return;
+      if (g.act) {
+        if (g.act.kind === 'intro') finishIntro();
+        else if (g.act.el._ufo) dropLetter(g.act.el, g.act.el._ufo.x, g.act.el._ufo.y);
+        g.act = null;
+      }
       g.mode = 'intro';
       g.introT = 0;
       g.score = 0; g.combo = 0; g.wave = 0;
@@ -457,6 +671,10 @@ export default function UFO() {
       if (e.key === 'Escape' && g.mode !== 'idle') exitArcade();
     };
     const onBlur = () => { g.pointer.down = false; };
+    const onClickLetter = (e) => {
+      const el = e.target.closest && e.target.closest('[data-ufo-letter]');
+      if (el) startAbduct(el);
+    };
 
     window.addEventListener('pointermove', onPointerMove, { passive: true });
     window.addEventListener('pointerdown', onPointerDown);
@@ -465,6 +683,7 @@ export default function UFO() {
     window.addEventListener('keydown', onKey);
     window.addEventListener('blur', onBlur);
     window.addEventListener('resize', resize);
+    document.addEventListener('click', onClickLetter);
 
     const hit = hitRef.current;
     const onHitEnter = () => { g.hoverTarget = 1; };
@@ -556,6 +775,23 @@ export default function UFO() {
         /* scroll gives it a shove it recovers from */
         p.vy -= clamp(g.scrollVel, -60, 60) * 130 * dt;
         g.scrollVel *= Math.exp(-6 * dt);
+
+        /* mischief: every so often, go and borrow a letter */
+        if (!g.act && !g.reduced) {
+          g.mischiefT -= dt;
+          if (g.mischiefT <= 0) {
+            g.mischiefT = rand(20, 34);
+            const els = letterEls().filter((el) => {
+              const r = el.getBoundingClientRect();
+              return r.top > 90 && r.bottom < g.h - 30;
+            });
+            if (els.length) startAbduct(els[Math.floor(Math.random() * els.length)]);
+          }
+        }
+        if (g.act) {
+          const tgt = stepAct(dt);
+          if (tgt) { tx = tgt.x; ty = tgt.y; }
+        }
       } else {
         const pt = g.pointer;
         tx = clamp(pt.x, 40, g.w - 40);
@@ -563,8 +799,9 @@ export default function UFO() {
         if (!pt.seen) { tx = g.w * 0.5; ty = g.h * 0.7; }
       }
 
-      const stiff = g.mode === 'idle' ? 5.5 : 62;
-      const damp = g.mode === 'idle' ? 3.4 : 13;
+      const busy = g.mode === 'idle' && g.act;
+      const stiff = busy ? 34 : g.mode === 'idle' ? 5.5 : 62;
+      const damp = busy ? 9.5 : g.mode === 'idle' ? 3.4 : 13;
       [p.x, p.vx] = springStep(p.x, p.vx, tx, stiff, damp, dt);
       [p.y, p.vy] = springStep(p.y, p.vy, ty, stiff, damp, dt);
 
@@ -790,14 +1027,10 @@ export default function UFO() {
 
       const inGame = g.mode !== 'idle';
 
-      /* arcade backdrop */
+      /* arcade backdrop: the vignette lives in a CSS layer under the ships
+         (see backdropRef), only the letterbox is drawn here */
       if (inGame) {
         const k = clamp(g.introT / 0.6, 0, 1);
-        const vg = ctx.createRadialGradient(g.w / 2, g.h / 2, g.h * 0.2, g.w / 2, g.h / 2, g.h * 0.85);
-        vg.addColorStop(0, 'rgba(5,11,20,0)');
-        vg.addColorStop(1, `rgba(3,7,14,${0.82 * k})`);
-        ctx.fillStyle = vg;
-        ctx.fillRect(0, 0, g.w, g.h);
         /* letterbox */
         const bar = 26 * k;
         ctx.fillStyle = 'rgba(3,6,12,0.92)';
@@ -809,9 +1042,11 @@ export default function UFO() {
       }
 
       ctx.save();
+      g.shakeX = 0; g.shakeY = 0;
       if (g.shake > 0.001) {
         const s = g.shake * g.shake * 16;
-        ctx.translate(rand(-s, s), rand(-s, s));
+        g.shakeX = rand(-s, s); g.shakeY = rand(-s, s);
+        ctx.translate(g.shakeX, g.shakeY);
       }
 
       /* drops */
@@ -839,6 +1074,7 @@ export default function UFO() {
           lights: [C.red, C.amber, C.red],
           thrust: e.state === 'dive' ? 1 : 0.25,
           flash: e.flash, spin: e.big ? e.spin * 0.25 : 0, big: e.big,
+          solid: !!three,
         });
         if (e.big) {
           const w = 90, hp = e.hp / e.maxHp;
@@ -883,6 +1119,7 @@ export default function UFO() {
           accent: C.neon,
           lights: [C.neon, C.blue, C.violet],
           thrust: p.thrust, beam: p.beam, flash: p.flash,
+          solid: !!three,
         });
         ctx.globalAlpha = 1;
       }
@@ -1015,7 +1252,12 @@ export default function UFO() {
       }
 
       update(dt * g.timeScale);
+      stepLetters(dt);
       render();
+      if (three) three.render(g, dt, g.shakeX, g.shakeY);
+      if (backdropRef.current) {
+        backdropRef.current.style.opacity = g.mode === 'idle' ? '0' : clamp(g.introT / 0.6, 0, 1).toFixed(3);
+      }
 
       /* keep the invisible hitbox glued to the saucer */
       if (hit) {
@@ -1029,6 +1271,8 @@ export default function UFO() {
 
     return () => {
       cancelAnimationFrame(raf);
+      disposed = true;
+      if (three) three.dispose();
       window.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener('pointerdown', onPointerDown);
       window.removeEventListener('pointerup', onPointerUp);
@@ -1036,7 +1280,9 @@ export default function UFO() {
       window.removeEventListener('keydown', onKey);
       window.removeEventListener('blur', onBlur);
       window.removeEventListener('resize', resize);
+      document.removeEventListener('click', onClickLetter);
       document.removeEventListener('visibilitychange', onVis);
+      for (const el of letterEls()) { clearLetter(el); el.style.opacity = ''; }
       if (hit) {
         hit.removeEventListener('pointerenter', onHitEnter);
         hit.removeEventListener('pointerleave', onHitLeave);
@@ -1048,6 +1294,23 @@ export default function UFO() {
 
   return (
     <>
+      <div
+        ref={backdropRef}
+        className="fixed inset-0"
+        style={{
+          zIndex: arcade ? 9000 : 40,
+          pointerEvents: 'none',
+          opacity: 0,
+          background: 'radial-gradient(ellipse at center, rgba(5,11,20,0) 25%, rgba(3,7,14,0.82) 95%)',
+        }}
+        aria-hidden="true"
+      />
+      <canvas
+        ref={glRef}
+        className="fixed inset-0"
+        style={{ zIndex: arcade ? 9000 : 40, pointerEvents: 'none', width: '100%', height: '100%' }}
+        aria-hidden="true"
+      />
       <canvas
         ref={canvasRef}
         className="fixed inset-0"
@@ -1058,19 +1321,30 @@ export default function UFO() {
         }}
         aria-hidden="true"
       />
-      {/* invisible hitbox that rides along with the saucer */}
-      <div
+      {/* hitbox that rides along with the saucer */}
+      <button
         ref={hitRef}
-        className="fixed top-0 left-0"
+        type="button"
+        className="fixed top-0 left-0 rounded-full"
         style={{
           width: 92, height: 58,
           zIndex: 41,
           pointerEvents: arcade ? 'none' : 'auto',
           willChange: 'transform',
         }}
-        title="👽"
-        aria-label="Jogar"
-      />
+        title={t('ufoPlay')}
+        aria-label={t('ufoPlay')}
+        onClick={dismissHint}
+      >
+        {showHint && !arcade && (
+          <span
+            className="absolute left-1/2 top-full mt-1 -translate-x-1/2 whitespace-nowrap rounded-full border border-neon/30 bg-card/90 px-2.5 py-1 font-mono text-[10px] text-neon/80 backdrop-blur-sm"
+            style={{ animation: 'ufo-hint 0.4s ease-out both' }}
+          >
+            {t('ufoHint')}
+          </span>
+        )}
+      </button>
     </>
   );
 }
