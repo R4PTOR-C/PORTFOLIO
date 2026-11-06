@@ -351,7 +351,30 @@ html.ufo-boot-exit .ufo-loader-text { opacity: 0; transition: opacity 0.15s; }
 html.ufo-boot:not(.ufo-boot-exit) .badge-drop,
 html.ufo-boot:not(.ufo-boot-exit) .badge-swing { animation-play-state: paused; }
 
+/* ── arcade starfield: two layers scrolling down behind the ships ─────── */
+.ufo-stars, .ufo-stars::after {
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 24px 36px, #d8fff4 50%, transparent 51%),
+    radial-gradient(1px 1px at 150px 96px, #9fd8ff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 84px 170px, #ffffff 50%, transparent 51%),
+    radial-gradient(1px 1px at 196px 214px, #8fb0c8 50%, transparent 51%);
+  background-size: 230px 250px;
+  opacity: 0.5;
+  animation: ufo-stars 7s linear infinite;
+}
+.ufo-stars::after {
+  content: '';
+  background-size: 130px 140px;
+  opacity: 0.35;
+  animation-name: ufo-stars-far;
+  animation-duration: 9s;
+}
+@keyframes ufo-stars { to { background-position: 0 250px; } }
+@keyframes ufo-stars-far { to { background-position: 0 140px; } }
+
 @media (prefers-reduced-motion: reduce) {
+  .ufo-stars, .ufo-stars::after { animation: none; }
   .badge-drop, .badge-swing { animation: none; }
   html { scroll-behavior: auto; }
   *, *::before, *::after {
