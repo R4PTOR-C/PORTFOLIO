@@ -11,7 +11,7 @@ import { TbApi, TbDatabase, TbBrowser } from 'react-icons/tb';
 import { LetterHeading } from '@/components/Letters';
 
 /* Bottom to top: the packet starts in the database and ends on screen. */
-const LAYERS = [
+export const LAYERS = [
   {
     key: 'layerData', tone: '#6ba6fb', code: 'SELECT * FROM treinos;',
     items: [
@@ -47,7 +47,7 @@ const LAYERS = [
   },
 ];
 
-const TOOLS = [
+export const TOOLS = [
   { name: 'Git',        Icon: SiGit,       color: '#F05032' },
   { name: 'Docker',     Icon: SiDocker,    color: '#2496ED' },
   { name: 'Blender',    Icon: SiBlender,   color: '#F5792A' },

@@ -1,8 +1,32 @@
 'use client';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { goianiaNow } from '@/lib/useGoianiaTime';
+
+/* The sky follows the clock in Goiânia: full stars at night, a warm
+   horizon at dawn and dusk, a paler sky with fewer stars by day. */
+const STAR_LEVEL = { night: 1, dawn: 0.7, dusk: 0.7, day: 0.45 };
+const SKY = {
+  night: 'none',
+  dawn: 'radial-gradient(120% 55% at 50% 115%, rgba(255,181,71,0.10), transparent 70%)',
+  day: 'linear-gradient(180deg, rgba(107,166,251,0.07), transparent 55%)',
+  dusk: 'radial-gradient(120% 55% at 50% 115%, rgba(255,43,214,0.08), rgba(255,181,71,0.05) 40%, transparent 75%)',
+};
 
 export default function StarField() {
   const canvasRef = useRef(null);
+  const level = useRef(1);
+  const [period, setPeriod] = useState(null);
+
+  useEffect(() => {
+    const check = () => {
+      const p = goianiaNow().period;
+      level.current = STAR_LEVEL[p];
+      setPeriod(p);
+    };
+    check();
+    const id = setInterval(check, 60000);
+    return () => clearInterval(id);
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -37,7 +61,7 @@ export default function StarField() {
       stars.forEach((s) => {
         ctx.beginPath();
         ctx.arc(s.x + s.ox, s.y + s.oy, s.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(180,210,255,${s.alpha})`;
+        ctx.fillStyle = `rgba(180,210,255,${s.alpha * level.current})`;
         ctx.fill();
       });
     };
@@ -88,11 +112,18 @@ export default function StarField() {
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      aria-hidden="true"
-      className="fixed inset-0 z-0 pointer-events-none"
-      style={{ opacity: 0.6 }}
-    />
+    <>
+      <div
+        aria-hidden="true"
+        className="fixed inset-0 z-0 pointer-events-none transition-opacity duration-1000"
+        style={{ background: period ? SKY[period] : 'none', opacity: period ? 1 : 0 }}
+      />
+      <canvas
+        ref={canvasRef}
+        aria-hidden="true"
+        className="fixed inset-0 z-0 pointer-events-none"
+        style={{ opacity: 0.6 }}
+      />
+    </>
   );
 }

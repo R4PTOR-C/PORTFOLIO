@@ -2,9 +2,10 @@
 import { useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { TbMapPin, TbCopy } from 'react-icons/tb';
+import { TbMapPin, TbCopy, TbFileDownload } from 'react-icons/tb';
 import Letters, { LetterHeading } from '@/components/Letters';
 import { socialLinks } from '@/lib/socialLinks';
+import useGoianiaTime, { statusOf } from '@/lib/useGoianiaTime';
 
 const EMAIL = 'rafaelcroriz7@gmail.com';
 
@@ -15,6 +16,7 @@ export default function Contact() {
   const { t } = useTranslation();
   const reduce = useReducedMotion();
   const [copied, setCopied] = useState(false);
+  const now = useGoianiaTime();
 
   const copy = async () => {
     try {
@@ -22,6 +24,15 @@ export default function Contact() {
       setCopied(true);
       setTimeout(() => setCopied(false), 1800);
     } catch { /* clipboard blocked: the mailto link still works */ }
+  };
+
+  /* the browser's own print dialog saves the PDF; the title becomes the
+     suggested file name */
+  const printResume = () => {
+    const prev = document.title;
+    document.title = t('printDocTitle');
+    window.addEventListener('afterprint', () => { document.title = prev; }, { once: true });
+    window.print();
   };
 
   return (
@@ -64,12 +75,17 @@ export default function Contact() {
             <TbCopy aria-hidden="true" className="w-4 h-4" />
             {copied ? t('contactCopied') : t('contactCopy')}
           </button>
+          <button onClick={printResume} className="btn btn-ghost !py-2 !px-4 text-xs font-mono">
+            <TbFileDownload aria-hidden="true" className="w-4 h-4" />
+            {t('printCta')}
+          </button>
         </div>
 
         <div className="mt-20 pt-6 border-t border-border-dim flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           <p className="mono-label inline-flex items-center gap-2">
             <TbMapPin aria-hidden="true" className="w-4 h-4" strokeWidth={1.6} />
             {t('contactLocation')}
+            {now && <> · <time className="tabular-nums">{now.label}</time> · {t(`status_${statusOf(now.hour)}`)}</>}
           </p>
           <div className="flex items-center gap-2.5">
             {socialLinks.map((s) => (

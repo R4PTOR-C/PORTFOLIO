@@ -2,6 +2,7 @@
 import { useRef } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import UfoWorkbench from '@/components/UfoWorkbench';
 
 /* One paragraph, read at the speed you scroll: words light up from dim to
    full as the text passes through the middle of the screen, and the names
@@ -64,6 +65,9 @@ export default function About() {
           <ScrubText text={t('aboutText')} highlights={t('aboutHighlights').split('|')} />
         </div>
 
+        <div className="mt-20 md:mt-28">
+          <UfoWorkbench />
+        </div>
       </div>
     </section>
   );

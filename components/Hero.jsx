@@ -3,6 +3,7 @@ import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion
 import { useTranslation } from 'react-i18next';
 import Letters from '@/components/Letters';
 import CrewBadge from '@/components/CrewBadge';
+import useGoianiaTime from '@/lib/useGoianiaTime';
 
 const CONTACT_HREF = 'mailto:rafaelcroriz7@gmail.com';
 
@@ -12,6 +13,7 @@ const CONTACT_HREF = 'mailto:rafaelcroriz7@gmail.com';
 export default function Hero() {
   const { t } = useTranslation();
   const reduce = useReducedMotion();
+  const now = useGoianiaTime();
   const { scrollY } = useScroll();
   const floorY = useTransform(scrollY, [0, 800], [0, 160]);
   const titleY = useTransform(scrollY, [0, 800], [0, -90]);
@@ -60,6 +62,7 @@ export default function Hero() {
         <motion.div className="lg:col-span-8" style={{ y: reduce ? 0 : titleY }}>
           <motion.p {...rise(0)} className="font-mono text-xs md:text-sm text-neon caret">
             {t('heroSignal')}
+            {now && <> · <time className="tabular-nums">{now.label}</time></>}
           </motion.p>
 
           <h1 data-ufo-intro="" className="display h-hero mt-7 text-text">
