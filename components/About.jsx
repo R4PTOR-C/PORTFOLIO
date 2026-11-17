@@ -55,12 +55,6 @@ function ScrubText({ text, highlights }) {
 
 export default function About() {
   const { t } = useTranslation();
-  const tiles = [
-    { label: 'aboutCompanyLabel', value: 'aboutCompany', href: '#fenrys' },
-    { label: 'aboutNowLabel', value: 'aboutNow', href: '#projects' },
-    { label: 'aboutStatusLabel', value: 'aboutStatus', live: true },
-  ];
-
   return (
     <section id="about" className="section relative">
       <div className="wrap">
@@ -70,34 +64,6 @@ export default function About() {
           <ScrubText text={t('aboutText')} highlights={t('aboutHighlights').split('|')} />
         </div>
 
-        <ul className="mt-16 grid sm:grid-cols-3 gap-4">
-          {tiles.map(({ label, value, href, live }, i) => {
-            const inner = (
-              <>
-                <p className="mono-label">{t(label)}</p>
-                <p className="mt-3 display text-lg leading-tight text-text flex items-center gap-2.5">
-                  {live && <span className="pulse-dot w-2 h-2 rounded-full bg-neon shrink-0" aria-hidden="true" />}
-                  {t(value)}
-                </p>
-              </>
-            );
-            return (
-              <motion.li
-                key={label}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-10%' }}
-                transition={{ duration: 0.5, delay: i * 0.08 }}
-              >
-                {href ? (
-                  <a href={href} className="panel block p-6 h-full transition-all duration-300 hover:-translate-y-1 hover:border-neon/40">{inner}</a>
-                ) : (
-                  <div className="panel p-6 h-full">{inner}</div>
-                )}
-              </motion.li>
-            );
-          })}
-        </ul>
       </div>
     </section>
   );

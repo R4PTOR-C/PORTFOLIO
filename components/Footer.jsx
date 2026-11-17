@@ -10,7 +10,7 @@ export default function Footer() {
       <div className="wrap flex flex-col md:flex-row md:items-center justify-between gap-4">
         <p className="font-mono text-xs text-dim max-w-[60ch]">{t('footerMade')}</p>
         <p className="mono-label">
-          © {year} <span className="text-muted">Rafael Caldas</span> · {t('footerRights')}
+          © {year} <span className="text-muted">Rafael Caldas</span>
         </p>
       </div>
     </footer>

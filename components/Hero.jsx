@@ -33,7 +33,7 @@ export default function Hero() {
       <div
         aria-hidden="true"
         className="absolute inset-0 pointer-events-none"
-        style={{ background: 'radial-gradient(ellipse 45% 55% at 78% 40%, rgba(0,229,160,0.10), transparent 70%), radial-gradient(ellipse 40% 40% at 15% 20%, rgba(59,130,246,0.10), transparent 70%)' }}
+        style={{ background: 'radial-gradient(ellipse 45% 55% at 78% 40%, rgba(0,229,160,0.05), transparent 70%), radial-gradient(ellipse 40% 40% at 15% 20%, rgba(59,130,246,0.05), transparent 70%)' }}
       />
 
       {/* synthwave floor */}
@@ -77,11 +77,11 @@ export default function Hero() {
             {t('heroSub')}
           </motion.p>
 
-          <motion.div {...rise(0.4)} className="mt-10 flex flex-wrap gap-3">
+          <motion.div {...rise(0.4)} className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
             <a href={CONTACT_HREF} className="btn btn-primary">
               {t('ctaContact')} <span aria-hidden="true">↗</span>
             </a>
-            <a href="#projects" className="btn btn-ghost">
+            <a href="#projects" className="text-sm font-semibold text-muted underline decoration-border underline-offset-[6px] transition-colors hover:text-text hover:decoration-neon">
               {t('ctaProjects')}
             </a>
           </motion.div>
@@ -91,21 +91,6 @@ export default function Hero() {
           <CrewBadge />
         </div>
       </div>
-
-      <motion.a
-        href="#about"
-        {...rise(1.2)}
-        className="hidden lg:flex absolute bottom-6 left-1/2 -translate-x-1/2 flex-col items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-dim hover:text-neon"
-      >
-        {t('heroScroll')}
-        <motion.span
-          aria-hidden="true"
-          animate={reduce ? {} : { y: [0, 6, 0] }}
-          transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
-        >
-          ↓
-        </motion.span>
-      </motion.a>
 
       <style>{`@keyframes floor-run { to { background-position: 0 64px; } }`}</style>
     </section>

@@ -115,8 +115,7 @@ export default function CrewBadge() {
           </div>
 
           <div className="mt-4 px-5 pb-5 flex items-end justify-between gap-3">
-            <p className="font-mono text-[10px] text-neon flex items-center gap-1.5">
-              <span className="pulse-dot w-1.5 h-1.5 rounded-full bg-neon" aria-hidden="true" />
+            <p className="font-mono text-[10px] text-neon">
               {t('badgeStatus')}
             </p>
             <div
@@ -140,7 +139,6 @@ export default function CrewBadge() {
         </div>
       </motion.div>
 
-      <p className="absolute bottom-0 right-0 font-mono text-[10px] text-dim rotate-[-8deg]">↔ {t('badgeDrag')}</p>
     </div>
   );
 }

@@ -1,6 +1,5 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import Marquee from "@/components/Marquee";
 import About from "@/components/About";
 import Fenrys from "@/components/Fenrys";
 import Stack from "@/components/Stack";
@@ -14,7 +13,6 @@ export default function Home() {
     <main className="relative z-10">
       <Navbar />
       <Hero />
-      <Marquee />
       <About />
       <Fenrys />
       <Projects />

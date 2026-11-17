@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { TbArrowUpRight } from 'react-icons/tb';
 
 const SITE = 'https://www.atlanteontraining.com.br/';
-const STACK = ['React', 'Capacitor', 'Express', 'PostgreSQL', 'Socket.IO', 'OpenAI'];
 const SCREEN = '/projects/atlanteon-screen.webp';
 
 /* The phone is a WebGL scene (components/phoneScene.js), loaded only when the
@@ -90,7 +89,6 @@ function Phone3D() {
       </div>
 
       <canvas ref={canvasRef} className={`absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing touch-pan-y transition-opacity duration-700 ${ready ? 'opacity-100' : 'opacity-0'}`} aria-hidden="true" />
-      <p className="absolute bottom-4 left-1/2 -translate-x-1/2 font-mono text-[10px] uppercase tracking-[0.2em] text-dim">↔ {t('projAtlDrag')}</p>
     </div>
   );
 }
@@ -128,7 +126,7 @@ export default function Projects() {
             </p>
             <p className="mt-6 text-lg md:text-xl text-text leading-relaxed">{t('projAtlDesc')}</p>
 
-            <ol className="mt-10 space-y-6">
+            <ul className="mt-10 space-y-5">
               {facts.map((k, i) => (
                 <motion.li
                   key={k}
@@ -136,19 +134,14 @@ export default function Projects() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true, margin: '-10%' }}
                   transition={{ duration: 0.5, delay: i * 0.1 }}
-                  className="grid grid-cols-[3rem_1fr] gap-3"
+                  className="flex gap-4 text-muted leading-relaxed"
                 >
-                  <span className="display text-2xl text-blue-light/60">0{i + 1}</span>
-                  <span className="text-muted leading-relaxed">{t(k)}</span>
+                  <span aria-hidden="true" className="mt-3 w-5 h-px shrink-0 bg-neon" />
+                  {t(k)}
                 </motion.li>
               ))}
-            </ol>
-
-            <ul className="mt-10 flex flex-wrap gap-2">
-              {STACK.map((s) => (
-                <li key={s} className="rounded-full border border-border px-3 py-1 font-mono text-[11px] text-muted">{s}</li>
-              ))}
             </ul>
+
 
             <a href={SITE} target="_blank" rel="noopener noreferrer" className="btn btn-primary group mt-10">
               {t('projAtlCta')}

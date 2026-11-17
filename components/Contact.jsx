@@ -51,7 +51,6 @@ export default function Contact() {
       <div className="wrap relative">
         <p className="kicker">{t('contactKicker')}</p>
         <LetterHeading text={t('contactTitle')} className="display mt-8 text-text text-[clamp(2.8rem,11vw,9rem)] leading-[0.9]" />
-        <p className="mt-8 text-lg md:text-xl text-muted max-w-[40ch]">{t('contactSub')}</p>
 
         <div className="mt-12 flex flex-wrap items-center gap-4">
           <a

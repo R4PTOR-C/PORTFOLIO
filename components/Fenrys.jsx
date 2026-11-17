@@ -2,15 +2,11 @@
 import { useRef } from 'react';
 import { motion, useMotionValue, useSpring, useTransform, useReducedMotion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { TbArrowUpRight, TbWorld, TbDeviceMobile, TbSparkles, TbShoppingCart, TbPlugConnected, TbCloud } from 'react-icons/tb';
+import { TbArrowUpRight } from 'react-icons/tb';
 import { LetterHeading } from '@/components/Letters';
 
 const SITE = 'https://fenrystech.com.br/';
 const INDIGO = '#6B80E7';
-const SERVICES = [
-  ['fenrysSvc1', TbWorld], ['fenrysSvc2', TbDeviceMobile], ['fenrysSvc3', TbSparkles],
-  ['fenrysSvc4', TbShoppingCart], ['fenrysSvc5', TbPlugConnected], ['fenrysSvc6', TbCloud],
-];
 
 /* The studio he runs, in its own colours (silver + indigo from the Fenrys
    brand) so it reads as a different entity from the personal site around
@@ -53,32 +49,13 @@ export default function Fenrys() {
           <p className="mt-6 font-mono text-sm" style={{ color: '#9AADF2' }}>{t('fenrysRole')} · {t('fenrysPlace')}</p>
           <p className="mt-6 text-lg text-muted leading-relaxed max-w-[48ch]">{t('fenrysDesc')}</p>
 
-          <ul className="mt-10 grid sm:grid-cols-2 gap-3">
-            {SERVICES.map(([k, Icon], i) => (
-              <motion.li
-                key={k}
-                initial={reduce ? false : { opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-10%' }}
-                transition={{ duration: 0.45, delay: i * 0.06 }}
-                className="group rounded-2xl border p-4 transition-all duration-300 hover:-translate-y-1"
-                style={{ borderColor: 'rgba(107,128,231,0.18)', background: 'rgba(15,18,37,0.7)' }}
-              >
-                <p className="flex items-center gap-2.5 text-text font-semibold text-sm">
-                  <Icon aria-hidden="true" className="w-5 h-5 transition-transform duration-300 group-hover:scale-125 group-hover:-rotate-6" style={{ color: INDIGO }} />
-                  {t(k)}
-                </p>
-                <p className="mt-2 text-xs text-dim leading-relaxed">{t(`${k}d`)}</p>
-              </motion.li>
-            ))}
-          </ul>
 
           <a
             href={SITE}
             target="_blank"
             rel="noopener noreferrer"
             className="btn group mt-10 text-white"
-            style={{ background: INDIGO, boxShadow: '0 10px 40px -12px rgba(107,128,231,0.8)' }}
+            style={{ background: INDIGO, boxShadow: '0 10px 30px -14px rgba(107,128,231,0.45)' }}
           >
             {t('fenrysCta')}
             <TbArrowUpRight aria-hidden="true" className="w-4 h-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
@@ -121,7 +98,7 @@ export default function Fenrys() {
                 alt="Fenrys Tech"
                 width={640}
                 height={544}
-                className="w-full h-full object-contain drop-shadow-[0_20px_50px_rgba(107,128,231,0.45)]"
+                className="w-full h-full object-contain drop-shadow-[0_20px_40px_rgba(107,128,231,0.25)]"
                 style={{ transform: 'translateZ(40px)' }}
               />
             </motion.div>

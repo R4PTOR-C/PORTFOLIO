@@ -36,8 +36,8 @@ function Entry({ e, i }) {
           <p className="font-mono text-xs uppercase tracking-[0.18em] flex items-center gap-2" style={{ color: e.tone }}>
             LOG {String(LOG.length - i).padStart(2, '0')} · {t(e.period)}
             {e.now && (
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-neon/40 px-2 py-0.5 text-[10px] text-neon normal-case tracking-normal">
-                <span className="pulse-dot w-1.5 h-1.5 rounded-full bg-neon" aria-hidden="true" />{t('expNow')}
+              <span className="rounded-full border border-neon/40 px-2 py-0.5 text-[10px] text-neon normal-case tracking-normal">
+                {t('expNow')}
               </span>
             )}
           </p>
